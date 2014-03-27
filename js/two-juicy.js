@@ -3,15 +3,33 @@ var elem = document.querySelector('body');
 var params = { width: 500, height: 500 };
 var two = new Two(params).appendTo(elem);
 
-var grid = new Grid(5, 400, [3,2,1,4,0]);
+two.bind('mousemove', function(e) {
+
+   console.log(e);
+})
+
+if(urlParams.data === undefined || urlParams.juice === undefined) {
+   alert('invalid url');
+}
+
+var data = CSV.parse(urlParams.data);
+
+var juice = parseInt(urlParams.juice);
+
+//make weird data nice 
+for(var i = 0; i < data.length; i++) {
+   for(var j = 0; j < data[i].length; j++) {
+      data[i][j] = parseInt(data[i][j]);
+   }
+}
+
+console.log(data);
+
+var grid = new Grid(5, 400, data, juice);
 var mouse = new Two.Vector();
 
 two.bind('update', function(frameCount) {
    TWEEN.update();
-
-   if(grid.highlighted.animation) {
-      grid.highlighted.animation();
-   }
 }).play();
 
 var svg = $('svg').offset();
@@ -25,6 +43,7 @@ $(window)
 
 })
 .on('mousedown', function(e) {
+
    mouse.x = e.clientX - svg.left;
    mouse.y = e.clientY - svg.top;
 

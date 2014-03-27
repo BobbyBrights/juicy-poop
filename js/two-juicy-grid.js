@@ -1,9 +1,13 @@
-function Grid(numRows, width, orientation) {
+function Grid(numRows, width, data, juiceLevel) {
 
-   this.attributes = { numRows: numRows, width: width };
+   this.attributes = { numRows: numRows, width: width, juiceLevel: juiceLevel, data: data };
    this.selected = { row: -1, active: false };
    this.highlighted = { row: -1, active: false, box: null };
-   this.orientation = orientation;
+   this.orientation = [];
+
+   for(var i = 0; i < data.length; i++) {
+      this.orientation.push(i);
+   }
 
    this.vectors = [];
    this.boxes = []
@@ -12,6 +16,7 @@ function Grid(numRows, width, orientation) {
    this.group = two.makeGroup();
 
    this.init();
+   this.initVectors();
 }
 
 Grid.prototype.init = function() {
@@ -28,8 +33,11 @@ Grid.prototype.init = function() {
          var y = this.orientation.indexOf(row) * 
             (this.attributes.width / (this.attributes.numRows));
 
-         var box = new Box(row, col, (this.attributes.width / this.attributes.numRows)*0.5, x, y);
+         var width = (this.attributes.width / this.attributes.numRows) * 0.5;
 
+         var datum = this.attributes.data[row][col];
+
+         var box = new Box(row, col, width, x, y, datum);
 
          this.boxes[col].push(box);
 
@@ -41,7 +49,6 @@ Grid.prototype.init = function() {
    this.group.translation.set(two.width/2, two.width/2);
    this.background.translation.set(two.width/2, two.width/2);
 
-   this.initVectors();
 }
 
 Grid.prototype.initVectors = function() {

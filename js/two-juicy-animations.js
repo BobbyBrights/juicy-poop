@@ -2,61 +2,38 @@ function colorToString(r,g,b,a) {
    return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
 }
 
-function Box(row, col, width, x, y) {
+function Box(row, col, width, x, y, datum) {
 
    this.width = width;
    this.row = row;
    this.col = col;
-   
+   this.datum = datum;
+
    this.animations = 
    {
       points:
       {
-         state: 'origin',
-         animating: false,
          origin: this.generate(this.width, 4),
-         fn: undefined,
-         onComplete: undefined
       },
       color: 
       {
-         state : 'origin',
-         animating : false,
-         origin: { r: this.row * 50, g: 0, b: this.col * 50 },
-         fn: undefined,
-         onComplete: undefined,
+         origin: { r: 0, g: this.datum > 0 ? 255 : 0, b: this.datum == 0 ? 255 : 0 },
       },
       linewidth:
       {
-         state: 'origin',
          origin: 1,
-         animating: true,
-         fn: undefined,
-         onComplete: undefined
       },
       translation:
       {
-         state: 'origin',
          origin: { x: x, y: y },
-         animating: false,
-         fn: undefined,
-         onComplete: undefined
       },
       rotation:
       {
-         state: 'origin',
          origin: Math.PI / 4,
-         animating: false,
-         fn: undefined,
-         onComplete: undefined
       },
       scale:
       {
-         state: 'origin',
          origin: 1,
-         animating: false,
-         fn: undefined,
-         onComplete: undefined
       }
    }
 
