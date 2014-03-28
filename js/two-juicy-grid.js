@@ -10,59 +10,77 @@ function Grid(numRows, width, data, juiceLevel) {
    }
 
    this.vectors = [];
-   this.boxes = []
+
+   this.boxes = {
+      all: [],
+      highlighted: [],
+      selected: [],
+      scored: []
+   };
 
    this.background = two.makeGroup();
    this.group = two.makeGroup();
 
-   this.init();
-   this.initVectors();
+   this.group.translation.set(two.width/2, two.width/2);
+   this.background.translation.set(two.width/2, two.width/2);
+
+   this.setVectors();
+   this.setBoxes();
+
+   _.each(this.boxes.all, function(b) {
+      b.animate(SETTLE[this.attributes.juiceLevel]);
+   }, this);
 }
 
-Grid.prototype.init = function() {
+Grid.prototype.setBoxes = function() {
 
 
    for(col = 0; col < this.attributes.numRows; col++) {
 
-      this.boxes.push([]);
-
       for(row = 0; row < this.attributes.numRows; row++) {
-
-         var x = this.orientation.indexOf(col) * 
-            (this.attributes.width / (this.attributes.numRows));
-         var y = this.orientation.indexOf(row) * 
-            (this.attributes.width / (this.attributes.numRows));
 
          var width = (this.attributes.width / this.attributes.numRows) * 0.5;
 
          var datum = this.attributes.data[row][col];
 
-         var box = new Box(row, col, width, x, y, datum);
+         var box = new Box(this, row, col, width, datum);
 
-         this.boxes[col].push(box);
+         this.boxes.all.push(box);
 
          this.group.add(box.shape);
       }
    }
-
-   this.group.center();
-   this.group.translation.set(two.width/2, two.width/2);
-   this.background.translation.set(two.width/2, two.width/2);
-
 }
 
-Grid.prototype.initVectors = function() {
+Grid.prototype.setVectors = function() {
 
-   _.each(_.flatten(this.boxes), function(b) {
-      if(b.row == b.col) {
-         this.vectors.push(b.shape.translation.clone());
-      }
+   var max = (this.attributes.numRows-1) 
+      * (this.attributes.width / this.attributes.numRows) / 2;
+
+   for(var i = 0; i < this.attributes.numRows; i++) {
+
+      var distance = i * (this.attributes.width / this.attributes.numRows);
+
+      var v = new Two.Vector(distance, distance);
+
+      v.subSelf(new Two.Vector(max, max));
+
+      this.vectors.push(v);
+   }
+}
+
+Grid.prototype.getBoxesFromCluster = function(clusterStart, clusterSize) {
+
+   return _.filter(this.boxes.all, function(box) {
+
+      var rowIndex = this.orientation.indexOf(box.row);
+      var colIndex = this.orientation.indexOf(box.col);
+
+      return (this.orientation.indexOf(box.row) >= clusterStart 
+               && this.orientation.indexOf(box.col) >= clusterStart 
+               && this.orientation.indexOf(box.row) <= clusterStart + clusterSize
+               && this.orientation.indexOf(box.col) <= clusterStart + clusterSize);
    }, this);
-
-   this.vectors = _.sortBy(this.vectors, function(v) {
-      return v.x;
-   });
-
 }
 
 Grid.prototype.getSelectedMinusGrabbed= function() {
@@ -72,19 +90,48 @@ Grid.prototype.getSelectedMinusGrabbed= function() {
 }
 
 Grid.prototype.getBoxesFromIndex = function(index) {
-   return _.filter(_.flatten(this.boxes), function(b) {
+   return _.filter(this.boxes.all, function(b) {
       return b.row == this.orientation[index] || b.col == this.orientation[index]; 
    }, this);
 }
 
+Grid.prototype.getBoxesFromRowCol = function(row) {
+   return _.filter(this.boxes.all, function(b) {
+      return b.row == row && b.col == row;
+   });
+}
+
+Grid.prototype.getBoxesFromRowMinus = function(row) {
+
+   return _.filter(this.boxes.all, function(b) {
+      return b.row == row && b.col != row;
+   });
+
+}
+
+Grid.prototype.getBoxesFromRowOrCol = function(row) {
+   return _.filter(this.boxes.all, function(b) {
+      return b.row == row || b.col == row;
+   });
+
+}
+
+Grid.prototype.getBoxesFromColMinus = function(row) {
+
+   return _.filter(this.boxes.all, function(b) {
+      return b.col == row && b.row != row;
+   });
+
+}
+
 Grid.prototype.getBoxesFromRow = function(row) {
-   return _.filter(_.flatten(this.boxes), function(b) {
+   return _.filter(this.boxes, function(b) {
       return b.row == row || b.col == row;
    });
 }
 
 Grid.prototype.getBoxesMinusRow = function(row) {
-   return _.reject(_.flatten(this.boxes), function(b) {
+   return _.reject(this.boxes, function(b) {
       return b.row == row || b.col == row;
    });
 }
@@ -127,20 +174,46 @@ Grid.prototype.select = function(row) {
    this.selected.vector = {};
 
    this.selected.row = row;
-   this.selected.boxes = this.getBoxesFromRow(this.selected.row);
-   this.selected.box = this.boxes[this.selected.row][this.selected.row];
-   this.selected.plingCount = 0;
+   this.boxes.selected = this.getBoxesFromRowCol(this.selected.row);
+   this.boxes.selected_all = this.getBoxesFromRowOrCol(this.selected.row);
+   this.boxes.selected_col = this.getBoxesFromColMinus(this.selected.row);
+   this.boxes.selected_row = this.getBoxesFromRowMinus(this.selected.row);
 
    this.selected.index = this.orientation.indexOf(this.selected.row);
 
 }
 
+Grid.prototype.calcScore = function() {
+
+   this.boxes.scored = [];
+
+   for(var clusterStart = 0; clusterStart < this.attributes.numRows; clusterStart++) {
+
+      for(var clusterSize = 0; clusterSize < this.attributes.numRows-clusterStart; clusterSize++) {
+
+         var cluster = this.getBoxesFromCluster(clusterStart, clusterSize);
+
+         var isCluster = _.every(cluster, function(box) {
+            return (box.datum >= GAME.LOWER_THRESHOLD);
+         });
+
+         if(isCluster) {
+            this.boxes.scored = _.union(this.boxes.scored, cluster);
+         } else {
+            break;
+         }
+
+      }
+   }
+
+}
 
 Grid.prototype.isMouseInGrid = function(mouse) {
 
    //because mouse is in grid coords already
    var halfheight = halfwidth = this.attributes.width/2;
-   return (mouse.x > -halfwidth && mouse.x < halfwidth && mouse.y > -halfheight && mouse.y < halfheight);
+   return (mouse.x > -halfwidth && mouse.x < halfwidth && 
+           mouse.y > -halfheight && mouse.y < halfheight);
 }
 
 Grid.prototype.highlight = function(row) {
@@ -149,58 +222,54 @@ Grid.prototype.highlight = function(row) {
       return;
    }
 
-   if(this.highlighted.box && typeof this.highlighted.box.unighlight !== undefined) {
-      this.highlighted.box.animate(UNOUTLINE);
-   }
-
-   _.each(this.highlighted.boxes, function(b) {
-      //b.animate(UNOUTLINE);
-   });
+   _.each(this.boxes.highlighted, function(b) {
+      b.animate(UNOUTLINE[this.attributes.juiceLevel]);
+   }, this);
 
    this.highlighted.active = true;
    this.highlighted.row = row;
+   this.boxes.highlighted = this.getBoxesFromRowCol(this.highlighted.row);
 
-   this.highlighted.boxes = this.getBoxesFromRow(this.highlighted.row);
-   this.highlighted.box = this.boxes[this.highlighted.row][this.highlighted.row];
-
-   this.highlighted.box.animate(OUTLINE);
-
-   _.each(this.highlighted.boxes, function(b) {
-      //b.animate(OUTLINE);
-   });
+   _.each(this.boxes.highlighted, function(b) {
+      b.animate(OUTLINE[this.attributes.juiceLevel]);
+   }, this);
 }
 
 Grid.prototype.deselect = function() {
 
-   if(!this.selected.active) {
-      return;
-   }
+   this.calcScore();
 
-   _.each(this.selected.boxes, function(b) { 
-      b.animate(REDRAW);
-      b.animate(SHINE);
-   })
+   _.each(this.boxes.selected_all, function(b) { 
+      b.animate(REDRAW[this.attributes.juiceLevel]);
+   }, this)
+
+   _.each(this.boxes.scored, function(b) {
+      b.animate(SHINE[this.attributes.juiceLevel]);
+   }, this);
 
    this.selected.active = false;
-
 }
 
 Grid.prototype.swapOrientation = function(indexToSwap) {
+
+
+   var toSwap = _.reject(this.getBoxesFromIndex(indexToSwap), function(b) {
+      return b.row == this.selected.row || b.col == this.selected.row;
+   }, this);
 
    var tmp = this.orientation[this.selected.index];
    this.orientation[this.selected.index] = this.orientation[indexToSwap];
    this.orientation[indexToSwap] = tmp;
 
-
-   _.each(
-         _.reject(this.getBoxesFromIndex(this.selected.index), function(b) {
-            return b.row == grid.selected.row || b.col == grid.selected.row;
-         }), 
-         function(b) { 
-      b.animate(REDRAW);
-   })
+   _.each(toSwap, function(b) {
+      b.animate(REDRAW[this.attributes.juiceLevel]);
+   }, this)
 
    this.selected.index = this.orientation.indexOf(this.selected.row);
+}
+
+Grid.prototype.handleMouseup = function(mouse) {
+   this.deselect();
 }
 
 Grid.prototype.handleMousedown = function(mouse) {
@@ -216,6 +285,7 @@ Grid.prototype.handleMousedown = function(mouse) {
 
 Grid.prototype.handleMousemove = function(mouse) {
 
+
    //put mouse in Grid's matrix
    mouse.subSelf(this.group.translation);
 
@@ -225,17 +295,17 @@ Grid.prototype.handleMousemove = function(mouse) {
       return;
    }
 
-   _.each(_.flatten(this.selected.boxes), function(b) { 
+   _.each(this.boxes.selected, function(b) {
+      b.animate(REDRAW_MOUSE[0], mouse);
+   });
 
-      if(b.col == b.row && b.row == this.selected.row) {
-         b.animate(REDRAW_MOUSE, mouse);
-      } else if(b.col == this.selected.row) {
-         b.animate(REDRAW_MOUSE_COL, mouse);
-      } else if(b.row == this.selected.row) {
-         b.animate(REDRAW_MOUSE_ROW, mouse);
-      }
+   _.each(this.boxes.selected_row, function(b) {
+      b.animate(REDRAW_MOUSE_ROW[0], mouse);
+   });
 
-   }, this)
+   _.each(this.boxes.selected_col, function(b) {
+      b.animate(REDRAW_MOUSE_COL[0], mouse);
+   });
 
    var mouseToSel = this.getDistanceToIndex(this.selected.index, mouse); 
    var mouseToPrev = this.getDistanceToIndex(this.selected.index-1, mouse); 
