@@ -2,6 +2,7 @@ function colorToString(color) {
    return 'rgba(' + color.r + ',' + color.g + ',' + color.b + ',' + color.a + ')';
 }
 
+
 function getColor(row, col, datum, juiceLevel) {
 
    var r,g,b;
@@ -117,9 +118,17 @@ function Box(grid, row, col, width, datum) {
       big: undefined,
    };
 
+
+
    this.shape = new Two.Polygon(this.origin['points'], true);
    this.shape['opacity'] = 0;
 
+
+   this.shape.subdivide(30);
+
+   this.group = new Two.Group();
+   this.group.add(this.shape);
+   this.group.add(assets[0]);
 
    return this;
 }
@@ -340,21 +349,29 @@ var SETTLE = {
          var offset = (Math.random() * 100) + 400;
          var delay = (Math.random() * 300) + 200;
 
+         var rotationOffset = box.origin['rotation'] + (Math.random() * 2) - 0.8;
+
          var settle = new TWEEN.Tween(
                { 
                   y: box.origin['translation'].y - offset,
-                  o: 0
+                  o: 0,
+                  r: rotationOffset,
+                  s: 0
                })
             .to(
                { 
                   y: box.origin['translation'].y,
-                  o: 1
-               }, 1000)
+                  o: box.origin['opacity'],
+                  r: box.origin['rotation'],
+                  s: box.origin['scale']
+               }, 500)
             .delay(delay)
-            .easing(TWEEN.Easing.Cubic.Out)
+            .easing(TWEEN.Easing.Back.Out)
             .onUpdate(function() {
                box.shape['translation'].y = this.y;
                box.shape['opacity'] = this.o;
+               box.shape['rotation'] = this.r;
+               box.shape['scale'] = this.s;
                //box.origin['translation'].y = this.y;
             })
             .onStart(function() {
@@ -516,6 +533,7 @@ var SHINE = {
          .onStart(function() {
             box.origin['linewidth'] = 0;
             box.shape['linewidth'] = 0;
+            box.shape['fill'] = colorToString(box.origin['color']);
          })
 
       var color_in = new TWEEN.Tween(

@@ -47,7 +47,7 @@ Grid.prototype.setBoxes = function() {
 
          this.boxes.all.push(box);
 
-         this.group.add(box.shape);
+         this.group.add(box.group);
       }
    }
 }
