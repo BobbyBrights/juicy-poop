@@ -14,6 +14,7 @@ function Grid(numRows, width, data, juiceLevel) {
    this.boxes = {
       all: [],
       highlighted: [],
+      highlighted_extra: [],
       selected: [],
       scored: []
    };
@@ -46,8 +47,6 @@ Grid.prototype.setBoxes = function() {
          var box = new Box(this, row, col, width, datum);
 
          this.boxes.all.push(box);
-
-         this.group.add(box.group);
       }
    }
 }
@@ -226,11 +225,20 @@ Grid.prototype.highlight = function(row) {
       b.animate(UNOUTLINE[this.attributes.juiceLevel]);
    }, this);
 
+   _.each(this.boxes.highlighted_extra, function(b) {
+      b.animate(UNOUTLINE[this.attributes.juiceLevel]);
+   }, this);
+
    this.highlighted.active = true;
    this.highlighted.row = row;
    this.boxes.highlighted = this.getBoxesFromRowCol(this.highlighted.row);
+   this.boxes.highlighted_extra = this.getBoxesFromRowOrCol(this.highlighted.row);
 
    _.each(this.boxes.highlighted, function(b) {
+      b.animate(OUTLINE[this.attributes.juiceLevel]);
+   }, this);
+
+   _.each(this.boxes.highlighted_extra, function(b) {
       b.animate(OUTLINE[this.attributes.juiceLevel]);
    }, this);
 }
@@ -245,7 +253,11 @@ Grid.prototype.deselect = function() {
 
    _.each(this.boxes.scored, function(b) {
       b.animate(SHINE[this.attributes.juiceLevel]);
+
    }, this);
+
+   SQUARES[this.attributes.juiceLevel](grid.background);
+   //playCheer();
 
    this.selected.active = false;
 }

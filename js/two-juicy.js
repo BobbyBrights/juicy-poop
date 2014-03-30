@@ -1,6 +1,6 @@
 // Make an instance of two and place it on the page.
 var elem = document.querySelector('body');
-var params = { width: 500, height: 500 };
+var params = { id: "two", width: 500, height: 500 };
 var two = new Two(params).appendTo(elem);
 
 
@@ -26,8 +26,8 @@ var assets = [];
 
 $('#assets svg').each(function(i, el) {
    var shape = two.interpret(el).center();
-   shape.fill = 'black';
    shape.noStroke();
+   shape.visible = false;
    assets.push(shape);
    _.each(shape.children, function(child) {
       _.each(child.vertices, function(v) {
@@ -35,7 +35,6 @@ $('#assets svg').each(function(i, el) {
          v.oy = v.y;
       });
    });
-
 });
 
 
@@ -46,24 +45,31 @@ two.bind('update', function(frameCount) {
    TWEEN.update();
 }).play();
 
+$('document').ready(function() {
+   
+   var svg = $('svg:last').offset();
+   console.log(svg);
 
-var svg = $('svg').offset();
+   $(window)
+   .on('mousemove', function(e) {
+      e.preventDefault();
+      mouse.x = e.clientX - svg.left;
+      mouse.y = e.clientY - svg.top;
 
-$(window)
-.on('mousemove', function(e) {
-   mouse.x = e.clientX - svg.left;
-   mouse.y = e.clientY - svg.top;
+      grid.handleMousemove(mouse);
 
-   grid.handleMousemove(mouse);
+   })
+   .on('mousedown', function(e) {
+      e.preventDefault();
+
+      mouse.x = e.clientX - svg.left;
+      mouse.y = e.clientY - svg.top;
+
+      grid.handleMousedown(mouse);
+   })
+   .on('mouseup', function(e) {
+      e.preventDefault();
+      grid.handleMouseup(mouse);
+   });
 
 })
-.on('mousedown', function(e) {
-
-   mouse.x = e.clientX - svg.left;
-   mouse.y = e.clientY - svg.top;
-
-   grid.handleMousedown(mouse);
-})
-.on('mouseup', function(e) {
-   grid.handleMouseup(mouse);
-});

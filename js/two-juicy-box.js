@@ -74,7 +74,7 @@ function getColor(row, col, datum, juiceLevel) {
 
    }
 
-   return { r: r, g: g, b: b, a: 0.75 };
+   return { r: r, g: g, b: b, a: 0.8 };
 
 }
 
@@ -95,13 +95,13 @@ function Box(grid, row, col, width, datum) {
    this.row = row;
    this.col = col;
    this.datum = datum;
+   this.width = width;
 
    this.origin = {};
    this.origin.color = getColor(this.row, this.col, this.datum, grid.attributes.juiceLevel);
-   this.origin.points = generate(width, 4);
+   this.origin.points = generate(this.width, 4);
    this.origin.linewidth = 1;
    this.origin.stroke = "black";
-   this.origin.translation = new Two.Vector(grid.vectors[this.col].x, grid.vectors[this.row].y);
    this.origin.rotation = Math.PI / 4;
    this.origin.scale = 1;
    this.origin.opacity = 1;
@@ -119,26 +119,36 @@ function Box(grid, row, col, width, datum) {
    };
 
 
-
    this.shape = new Two.Polygon(this.origin['points'], true);
    this.shape['opacity'] = 0;
-
-
+   this.shape.scale = 1;
    this.shape.subdivide(30);
 
-   this.group = new Two.Group();
-   this.group.add(this.shape);
-   this.group.add(assets[0]);
+   this.shadow = new Two.Polygon(this.origin['points'], true);
+   this.shadow.translation.set(0,0);
+   this.shadow.rotation = Math.PI / 4;
+   this.shadow.visible = false;
+   this.shadow.fill = "rgba(50,50,50,0.1)";
+   this.shadow.noStroke();
 
-   return this;
-}
+   this.face = assets[1].clone();
+   this.face.scale = 0.5;
+   this.face.noStroke();
+   this.face.fill = "rgba(255,255,255,0.9)";
+   this.face.visible = true;
 
+   this.smile = assets[0].clone();
+   this.smile.scale = 0.5;
+   this.smile.noStroke();
+   this.smile.fill = "rgba(255,255,255,0.9)";
+   this.smile.visible = false;
 
-Box.prototype.setTranslation = function() {
+   this.group = two.makeGroup(this.shadow, this.shape, this.face, this.smile);
+   this.group.translation.set(grid.vectors[this.col].x, grid.vectors[this.row].y); 
+   this.group.rotation = 0;
+   this.group.scale = 1;
 
-   this.shape['translation'].set(
-      this.origin['translation'].x, 
-      this.origin['translation'].y);
+   this.group.addTo(grid.group);
 }
 
 
@@ -152,28 +162,22 @@ var REDRAW_MOUSE_COL = {
    0: function(box, mouse) {
       var vR = grid.orientation.indexOf(box.row);
 
-      box.origin['translation'].x = mouse.x; 
-      box.origin['translation'].y = grid.vectors[vR].y; 
-
-      box.setTranslation(); 
+      box.group['translation'].x = mouse.x; 
+      box.group['translation'].y = grid.vectors[vR].y; 
    },
 
    1: function(box, mouse) {
       var vR = grid.orientation.indexOf(box.row);
 
-      box.origin['translation'].x = mouse.x; 
-      box.origin['translation'].y = grid.vectors[vR].y; 
-
-      box.setTranslation(); 
+      box.group['translation'].x = mouse.x; 
+      box.group['translation'].y = grid.vectors[vR].y; 
    },
 
    2: function(box, mouse) {
       var vR = grid.orientation.indexOf(box.row);
 
-      box.origin['translation'].x = mouse.x; 
-      box.origin['translation'].y = grid.vectors[vR].y; 
-
-      box.setTranslation(); 
+      box.group['translation'].x = mouse.x; 
+      box.group['translation'].y = grid.vectors[vR].y; 
    }
 }
 
@@ -182,41 +186,36 @@ var REDRAW_MOUSE_ROW = {
    0: function(box, mouse) {
       var vC = grid.orientation.indexOf(box.col);
 
-      box.origin['translation'].x = grid.vectors[vC].x; 
-      box.origin['translation'].y = mouse.y; 
-
-      box.setTranslation(); 
+      box.group['translation'].x = grid.vectors[vC].x; 
+      box.group['translation'].y = mouse.y; 
    },
 
    1: function(box, mouse) {
       var vC = grid.orientation.indexOf(box.col);
 
-      box.origin['translation'].x = grid.vectors[vC].x; 
-      box.origin['translation'].y = mouse.y; 
 
-      box.setTranslation(); 
+      box.group['translation'].x = grid.vectors[vC].x; 
+      box.group['translation'].y = mouse.y; 
    },
 
    2: function(box, mouse) {
       var vC = grid.orientation.indexOf(box.col);
 
-      box.origin['translation'].x = grid.vectors[vC].x; 
-      box.origin['translation'].y = mouse.y; 
-
-      box.setTranslation(); 
+      box.group['translation'].x = grid.vectors[vC].x; 
+      box.group['translation'].y = mouse.y; 
    }
 }
 
 var REDRAW_MOUSE = {
    
    0: function(box, mouse) {
-      box.shape.translation.set(mouse.x, mouse.y);
+      box.group.translation.copy(mouse);
    },
    1: function(box, mouse) {
-      box.shape.translation.set(mouse.x, mouse.y);
+      box.group.translation.set(mouse.x, mouse.y);
    },
    2: function(box, mouse) {
-      box.shape.translation.set(mouse.x, mouse.y);
+      box.group.translation.set(mouse.x, mouse.y);
    }
 }
 
@@ -231,10 +230,8 @@ var REDRAW = {
       var vC = grid.orientation.indexOf(box.col);
       var vR = grid.orientation.indexOf(box.row);
 
-      box.origin['translation'].x = grid.vectors[vC].x; 
-      box.origin['translation'].y = grid.vectors[vR].y; 
-
-      box.setTranslation(); 
+      box.group['translation'].x = grid.vectors[vC].x; 
+      box.group['translation'].y = grid.vectors[vR].y; 
    },
 
    2: function(box) {
@@ -242,12 +239,12 @@ var REDRAW = {
       var vC = grid.orientation.indexOf(box.col);
       var vR = grid.orientation.indexOf(box.row);
 
-      box.origin['translation'].x = grid.vectors[vC].x; 
-      box.origin['translation'].y = grid.vectors[vR].y; 
+      box.group['translation'].x = grid.vectors[vC].x; 
+      box.group['translation'].y = grid.vectors[vR].y; 
 
 
-      var half_movex = box.origin['translation'].x - box.shape['translation'].x / 2;
-      var half_movey = box.origin['translation'].y - box.shape['translation'].y / 2;
+      //var half_movex = box.origin['translation'].x - box.shape['translation'].x / 2;
+      //var half_movey = box.origin['translation'].y - box.shape['translation'].y / 2;
 
       var vecStart = box.shape['translation'].clone(); 
       var vecEnd = new Two.Vector(
@@ -302,22 +299,14 @@ var REDRAW = {
       var vC = grid.orientation.indexOf(box.col);
       var vR = grid.orientation.indexOf(box.row);
 
-      box.origin['translation'].x = grid.vectors[vC].x; 
-      box.origin['translation'].y = grid.vectors[vR].y; 
+      var end = new Two.Vector(grid.vectors[vC].x, grid.vectors[vR].y);
 
       var redraw = new TWEEN
-         .Tween({ 
-            x: box.shape['translation'].x,
-            y: box.shape['translation'].y
-         })
-         .to({ 
-            x: box.origin['translation'].x,
-            y: box.origin['translation'].y,
-         }, 300)
+         .Tween({ x: box.group['translation'].x, y: box.group['translation'].y })
+         .to({ x: end.x, y: end.y }, 300)
          .easing(TWEEN.Easing.Cubic.InOut)
          .onUpdate(function() {
-            box.shape.translation.x = this.x;
-            box.shape.translation.y = this.y;
+            box.group['translation'].set(this.x, this.y);
          })
 
       if(box.tween['move']) {
@@ -331,6 +320,42 @@ var REDRAW = {
 
 }
 
+var SQUARES = {
+
+   0: function(background) {
+
+      },
+   1: function(background) {
+
+         for(var i = 0; i < 10; i++) {
+
+            var rect = new Two.Polygon(generate((two.width / 10) * i, 4), true);
+            rect.fill = "rgba(255,255,255,0)";
+            rect.linewidth = 2;
+            rect.stroke = "rgba(50,50,50,0.2)";
+            rect.visible = false;
+            background.add(rect);
+
+            var settle = new TWEEN.Tween({ rect: rect })
+               .to({ }, 300)
+               .delay(50 * i)
+               .onStart(function() {
+                  this.rect.visible = true;
+                  this.rect.rotation = this.rotation;
+               })
+               .onComplete(function() {
+                  background.remove(this.rect);
+               })
+               .start();
+         }
+
+         
+
+      },
+   2: function(box) {
+      }
+}
+
 var SETTLE = {
 
    0: function(box) {
@@ -338,9 +363,6 @@ var SETTLE = {
          box.shape['opacity'] = box.origin['opacity'];
          box.shape['rotation'] = box.origin['rotation'];
          box.shape['fill'] = colorToString(box.origin['color']);
-
-         box.shape['translation'].x = box.origin['translation'].x;
-         box.shape['translation'].y = box.origin['translation'].y;
          box.shape['opacity'] = 1;
 
       },
@@ -353,17 +375,19 @@ var SETTLE = {
 
          var settle = new TWEEN.Tween(
                { 
-                  y: box.origin['translation'].y - offset,
+                  y: -offset,
                   o: 0,
                   r: rotationOffset,
-                  s: 0
+                  s: 0,
+                  sh: 0
                })
             .to(
                { 
-                  y: box.origin['translation'].y,
+                  y: 0,
                   o: box.origin['opacity'],
                   r: box.origin['rotation'],
-                  s: box.origin['scale']
+                  s: box.origin['scale'],
+                  sh: 0.9
                }, 500)
             .delay(delay)
             .easing(TWEEN.Easing.Back.Out)
@@ -372,22 +396,22 @@ var SETTLE = {
                box.shape['opacity'] = this.o;
                box.shape['rotation'] = this.r;
                box.shape['scale'] = this.s;
-               //box.origin['translation'].y = this.y;
+               box.shadow['scale'] = this.sh;
             })
             .onStart(function() {
+               box.shadow.visible = true;
+               box.shadow.scale = 0;
 
                box.shape['opacity'] = box.origin['opacity'];
                box.shape['rotation'] = box.origin['rotation'];
                box.shape['fill'] = colorToString(box.origin['color']);
-               box.shape['translation'].x = box.origin['translation'].x;
+               box.shape['translation'].x = 0;
             })
             .onComplete(function() {
-               //console.log(box.shape['translation'].y)
-               box.shape['translation'].x = box.origin['translation'].x;
-               box.shape['translation'].y = box.origin['translation'].y;
+               box.shadow.visible = false;
+
             })
             .start();
-
 
       },
    2: function(box) {
@@ -418,16 +442,30 @@ var OUTLINE = {
             box.tween['highlight'].stop();
          }
 
-         box.shape.stroke = "orangered";
 
-         box.tween['highlight'] = new TWEEN.Tween({ t: box.shape['linewidth'] })
-            .to({ t: 15 }, 50)
+         box.tween['highlight'] = new TWEEN.Tween(
+               { 
+                  t: box.shape['linewidth'],
+                  tr: 0,//box.shape['translation'].x,
+                  sh: 0//box.shadow['translation'].y
+               })
+            .to({ t: 5, tr: -10, sh: 5 }, 100)
             .easing(TWEEN.Easing.Cubic.In)
             .onUpdate(function() {
-               box.shape.linewidth = box.origin['linewidth'] + this.t;
+               //box.shape.linewidth = box.origin['linewidth'] + this.t;
+               box.shape.translation.x = this.tr;
+               box.shape.translation.y = this.tr;
+               box.shadow.translation.x = this.sh;
+               box.shadow.translation.y = this.sh;
             })
+            .onStart(function() {
+               box.shadow.visible = true;
+               //box.shape.stroke = "orangered";
+               box.face.visible = false;
+               box.smile.visible = true;
 
-         box.tween['highlight'].start();
+            })
+            .start();
       },
 
    2: function(box) {
@@ -438,9 +476,6 @@ var OUTLINE = {
 var UNOUTLINE = {
 
    0: function(box) {
-         if(box.disabled['highlight']) {
-            return;
-         }
 
          box.shape.stroke = box.origin['stroke'];
          box.shape.linewidth = box.origin['linewidth'];
@@ -448,25 +483,33 @@ var UNOUTLINE = {
    
    1: function(box) {
 
-         if(box.disabled['highlight']) {
-            return;
-         }
-
          if(box.tween['highlight'] !== undefined) {
             box.tween['highlight'].stop();
          }
 
-         box.tween['highlight'] = new TWEEN.Tween({ t: box.shape['linewidth'] })
-            .to({ t: 0 }, 50)
+         box.tween['highlight'] = new TWEEN.Tween(
+               { 
+                  tr: box.shape['translation'].x,
+                  sh: box.shadow['translation'].x 
+               })
+            .to({ tr: 0, sh: 0 }, 400)
             .easing(TWEEN.Easing.Cubic.Out)
             .onUpdate(function() {
-               box.shape.linewidth = box.origin['linewidth']+ this.t;
+               //box.shape.linewidth = box.origin['linewidth'] + this.t;
+               box.shape.translation.x = this.tr;
+               box.shape.translation.y = this.tr;
+               box.shadow.translation.x = this.sh;
+               box.shadow.translation.y = this.sh;
             })
             .onComplete(function() {
-               box.shape.stroke = "black";
-            })
+               box.shadow.visible = false;
+               //box.shadow.translation.set(0,0);
+               //box.shape.stroke = "orangered";
+               box.smile.visible = false;
+               box.face.visible = true;
 
-         box.tween['highlight'].start();
+            })
+            .start();
 
       }
 }
@@ -550,7 +593,7 @@ var SHINE = {
                   r: Math.round(this.r), 
                   g: Math.round(this.g), 
                   b: Math.round(this.b), 
-                  a: 0.75 
+                  a: 0.9 
                };
 
                box.shape.fill = colorToString(color);
@@ -569,7 +612,7 @@ var SHINE = {
                   r: Math.round(this.r), 
                   g: Math.round(this.g), 
                   b: Math.round(this.b), 
-                  a: 0.75 
+                  a: 0.9 
                };
 
                box.shape.fill = colorToString(color);
