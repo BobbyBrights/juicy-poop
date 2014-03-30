@@ -10,7 +10,7 @@ var GAME = {
 };
 
 if(urlParams.data === undefined || urlParams.juice === undefined) {
-   alert('invalid url');
+   console.log('bad data');
 }
 
 //make everything numbers 
