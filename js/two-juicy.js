@@ -1,5 +1,5 @@
 // Make an instance of two and place it on the page.
-var elem = document.querySelector('body');
+var elem = document.querySelector('#game-container');
 var params = { id: "two", width: 500, height: 500 };
 var two = new Two(params).appendTo(elem);
 
@@ -44,6 +44,29 @@ var mouse = new Two.Vector();
 two.bind('update', function(frameCount) {
    TWEEN.update();
 }).play();
+
+$('#squares').on('click', function() {
+   SQUARES[1](grid.background);
+})
+
+$('#sweep').on('click', function() {
+   SWEEP[0](grid.background);
+})
+
+$('#slide').on('click', function() {
+   SLIDE[0](grid.foreground, grid.background);
+})
+
+$('#splat').on('click', function() {
+   SPLAT[0](grid.foreground, grid.background);
+})
+$('#ripple').on('click', function() {
+   RIPPLE[0](grid.foreground, grid.background);
+})
+
+$('#jump').on('click', function() {
+   JUMP[0](grid.foreground, grid.background);
+})
 
 $('document').ready(function() {
    

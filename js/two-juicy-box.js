@@ -128,7 +128,7 @@ function Box(grid, row, col, width, datum) {
    this.shadow.translation.set(0,0);
    this.shadow.rotation = Math.PI / 4;
    this.shadow.visible = false;
-   this.shadow.fill = "rgba(50,50,50,0.1)";
+   this.shadow.fill = "rgba(50,50,50,0.6)";
    this.shadow.noStroke();
 
    this.face = assets[1].clone();
@@ -320,6 +320,272 @@ var REDRAW = {
 
 }
 
+var SWEEP = {
+
+   0: function(background) {
+
+         var rect = new Two.Polygon(generate(two.width, 4), true);
+         rect.fill = "rgba(" + Math.floor(Math.random() * 100 + 155) + ",0,0,1)";
+         rect.noStroke();
+         rect.visible = false;
+
+         background.add(rect);
+
+         var sweep = new TWEEN.Tween({ rect: rect, y: -2 * two.width })
+            .to({ y: 0 }, 500) 
+            .delay(50)
+            .easing(TWEEN.Easing.Cubic.Out)
+            .onStart(function() {
+
+               console.log(this.rect);
+               this.rect.visible = true;
+               this.rect.translation.set(0, -2 *two.width);
+               
+            })
+            .onUpdate(function() {
+
+               this.rect.translation.set(0, this.y);
+
+            })
+            .onComplete(function() {
+               console.log(background.children);
+               _.each(background.children, function(v, i) {
+
+                  if(v.id != this.rect.id) {
+                     background.remove(v)
+                  }
+
+               }, this)
+
+            })
+            .start();
+
+
+      } 
+}
+
+var JUMP = {
+
+   0: function(foreground, background) {
+
+         var great = assets[2].clone();
+         great.fill = "blue";
+         great.noStroke();
+         foreground.add(great);
+
+         window.setTimeout(function() {
+            foreground.remove(great);
+         }, 1000)
+
+
+         _.each(great.children, function(p) {
+
+            var delay = Math.random() * 200;
+
+            p.visible = false;
+
+            var jump = new TWEEN.Tween({ poly: p, y: two.height, scale: 0 })
+               .to({ y: p.translation.y-100, scale: 2 }, 400)
+               .delay(delay)
+               .easing(TWEEN.Easing.Back.Out)
+               .onUpdate(function() {
+                  p.translation.y = this.y;
+                  p.scale = this.scale;
+
+               })
+               .onStart(function() {
+                  p.visible = true;
+                  p.translation.x -= 100;
+
+               })
+               .onComplete(function() {
+
+               })
+               .start();
+
+         })
+
+      }
+
+}
+
+var RIPPLE = {
+
+   0: function(foreground, background) {
+
+
+         var great = assets[2].clone();
+         great.fill = "blue";
+         great.noStroke();
+         great.scale = 2;
+         great.visible = true;
+         foreground.add(great);
+
+         var timeout = 1000;
+
+         window.setTimeout(function() {
+            foreground.remove(great);
+         }, timeout)
+
+         _.each(great.children, function(p) {
+
+            _.each(p.vertices, function(v) {
+
+               var ripple = new TWEEN.Tween( {
+                  v: v,
+                  r: 0
+               })
+               .to({ r: 4 * Math.PI }, timeout)
+               .delay(v.x * 2)
+               .onUpdate(function() {
+                  this.v.y = this.v.y + (4 * Math.sin(2 * this.r));
+               })
+               .start();
+            })
+         })
+
+      }
+
+}
+
+var SPLAT = {
+
+   0: function(foreground, background) {
+
+         var y = 0;
+
+         for(var i = 5; i > 0; i--) {
+
+            console.log(i);
+
+            var great_shadow = assets[2].clone();
+            great_shadow.fill = (i == 1 ? "blue" : "black");
+            great_shadow.noStroke();
+            great_shadow.visible = false;
+            foreground.add(great_shadow);
+
+            var extrude = new TWEEN.Tween({
+               i: i,
+               shadow: great_shadow,
+               y: 0,
+               scale: 1,
+               opacity: 0  
+            })
+            .to({ y: 50, scale: 2, opacity: 1 }, 1000)
+            .easing(TWEEN.Easing.Cubic.Out)
+            .delay(i * 100)
+            .onUpdate(function() {
+
+               this.shadow.opacity = (this.opacity);
+               this.shadow.translation.y = -this.y;
+               this.shadow.scale = this.scale;
+
+            })
+            .onStart(function() {
+               this.shadow.visible = true;
+
+            })
+            .onComplete(function() {
+               foreground.remove(this.shadow);
+            })
+            .start();
+
+         }
+      }
+}
+
+var SLIDE = {
+
+   0: function(foreground, background) {
+
+         var rect_bot = two.makeRectangle(0,-140, - two.width * 0.7, 80);
+         rect_bot.fill = "blue";
+         rect_bot.noStroke();
+         rect_bot.visible = true;
+
+         var rect_mid = two.makeRectangle(0,0, two.width * 0.8, 200);
+         rect_mid.fill = "blue";
+         rect_mid.noStroke();
+         rect_mid.visible = true;
+
+         var rect_top = two.makeRectangle(0,150, two.width * 0.6, 100);
+         rect_top.fill = "blue";
+         rect_top.noStroke();
+         rect_top.visible = true;
+         
+         var great = assets[2].clone();
+         great.noStroke();
+         great.fill = "orangered";
+         great.scale = 2;
+         great.visible = false;
+
+         foreground.add(rect_bot);
+         foreground.add(rect_mid);
+         foreground.add(rect_top);
+         foreground.add(great);
+
+         console.log(foreground.children);
+
+         var first = new TWEEN.Tween({ 
+             top_x: two.width, 
+             mid_x: -two.width, 
+             bot_x: two.width
+         })
+         .to({
+            top_x: 0,
+            mid_x: 0,
+            bot_x: 0 
+         })
+         .easing(TWEEN.Easing.Cubic.InOut)
+         .onUpdate(function() {
+            rect_top.translation.x = this.top_x;
+            rect_mid.translation.x = this.mid_x;
+            rect_bot.translation.x = this.bot_x;
+
+            if(rect_mid.translation.x > -100) {
+               great.visible = true;
+            }
+         })
+
+         var second = new TWEEN.Tween({
+             top_x: 0,
+             mid_x: 0,
+             bot_x: 0
+         })
+         .to({
+            top_x: -two.width,
+            mid_x: two.width,
+            bot_x: -two.width
+         })
+         .easing(TWEEN.Easing.Cubic.InOut)
+         .onUpdate(function() {
+            rect_top.translation.x = this.top_x;
+            rect_mid.translation.x = this.mid_x;
+            rect_bot.translation.x = this.bot_x;
+
+            if(rect_mid.translation.x > 100) {
+               great.visible = false;
+            }
+         })
+         .onComplete(function() {
+
+            foreground.remove(rect_top);
+            foreground.remove(rect_bot);
+            foreground.remove(rect_mid);
+            foreground.remove(great);
+
+         })
+
+         first.chain(second);
+            
+         first.start();
+
+
+      }
+
+
+}
+
 var SQUARES = {
 
    0: function(background) {
@@ -332,7 +598,7 @@ var SQUARES = {
             var rect = new Two.Polygon(generate((two.width / 10) * i, 4), true);
             rect.fill = "rgba(255,255,255,0)";
             rect.linewidth = 2;
-            rect.stroke = "rgba(50,50,50,0.2)";
+            rect.stroke = "rgba(50,50,50,1)";
             rect.visible = false;
             background.add(rect);
 
@@ -369,7 +635,7 @@ var SETTLE = {
    1: function(box) {
 
          var offset = (Math.random() * 100) + 400;
-         var delay = (Math.random() * 300) + 200;
+         var delay = (Math.random() * 300) + 1000;
 
          var rotationOffset = box.origin['rotation'] + (Math.random() * 2) - 0.8;
 
@@ -402,14 +668,17 @@ var SETTLE = {
                box.shadow.visible = true;
                box.shadow.scale = 0;
 
+               box.face.visible = false;
+               box.smile.visible = false;
+
                box.shape['opacity'] = box.origin['opacity'];
                box.shape['rotation'] = box.origin['rotation'];
                box.shape['fill'] = colorToString(box.origin['color']);
                box.shape['translation'].x = 0;
             })
             .onComplete(function() {
-               box.shadow.visible = false;
-
+               //box.shadow.visible = false;
+               box.face.visible = true;
             })
             .start();
 
@@ -422,6 +691,7 @@ var SETTLE = {
 
       },
 }
+
 
 var OUTLINE = {
 
@@ -449,17 +719,20 @@ var OUTLINE = {
                   tr: 0,//box.shape['translation'].x,
                   sh: 0//box.shadow['translation'].y
                })
-            .to({ t: 5, tr: -10, sh: 5 }, 100)
-            .easing(TWEEN.Easing.Cubic.In)
+            .to({ t: 5, tr: -10, sh: 5 }, 500)
+            .easing(TWEEN.Easing.Elastic.Out)
             .onUpdate(function() {
                //box.shape.linewidth = box.origin['linewidth'] + this.t;
                box.shape.translation.x = this.tr;
                box.shape.translation.y = this.tr;
                box.shadow.translation.x = this.sh;
                box.shadow.translation.y = this.sh;
+
+               box.smile.translation.x = this.tr;
+               box.smile.translation.y = this.tr;
             })
             .onStart(function() {
-               box.shadow.visible = true;
+               //box.shadow.visible = true;
                //box.shape.stroke = "orangered";
                box.face.visible = false;
                box.smile.visible = true;
@@ -500,14 +773,19 @@ var UNOUTLINE = {
                box.shape.translation.y = this.tr;
                box.shadow.translation.x = this.sh;
                box.shadow.translation.y = this.sh;
+
+               box.face.translation.x = this.tr;
+               box.face.translation.y = this.tr;
             })
             .onComplete(function() {
-               box.shadow.visible = false;
+               //box.shadow.visible = false;
                //box.shadow.translation.set(0,0);
                //box.shape.stroke = "orangered";
+
+            })
+            .onStart(function() {
                box.smile.visible = false;
                box.face.visible = true;
-
             })
             .start();
 

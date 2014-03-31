@@ -21,9 +21,14 @@ function Grid(numRows, width, data, juiceLevel) {
 
    this.background = two.makeGroup();
    this.group = two.makeGroup();
+   this.foreground = two.makeGroup();
 
    this.group.translation.set(two.width/2, two.width/2);
    this.background.translation.set(two.width/2, two.width/2);
+   this.foreground.translation.set(two.width/2, two.width/2);
+
+
+   //this.foreground.add(this.great);
 
    this.setVectors();
    this.setBoxes();
@@ -252,11 +257,13 @@ Grid.prototype.deselect = function() {
    }, this)
 
    _.each(this.boxes.scored, function(b) {
-      b.animate(SHINE[this.attributes.juiceLevel]);
+      //b.animate(SHINE[this.attributes.juiceLevel]);
 
    }, this);
 
-   SQUARES[this.attributes.juiceLevel](grid.background);
+   //SQUARES[this.attributes.juiceLevel](grid.background);
+   //SWEEP[0](grid.background);
+   //GREAT[0](grid.foreground, grid.background);
    //playCheer();
 
    this.selected.active = false;
