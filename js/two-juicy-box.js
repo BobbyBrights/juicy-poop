@@ -2,80 +2,77 @@ function colorToString(color) {
    return 'rgba(' + color.r + ',' + color.g + ',' + color.b + ',' + color.a + ')';
 }
 
+function randomInt(beginRange, endRange) {
+   return Math.floor(Math.random() * (endRange-beginRange) + beginRange);
+}
 
-function getColor(row, col, datum, juiceLevel) {
+function randomBool() {
+   return Math.random() > 0.5 ? true: false;
+}
 
-   var r,g,b;
-
-   if(juiceLevel == 0) {
-
-      if(datum > GAME.UPPER_THRESHOLD) {
-
-         r = 200;
-         g = 200;
-         b = 200;
-
-      } else if (datum > GAME.LOWER_THRESHOLD) {
-
-         r = 100;
-         g = 100;
-         b = 100;
-
-      } else {
-         r = 50;
-         g = 50;
-         b = 50;
-      }
-
-   } else if(juiceLevel == 1) {
-
-      if(datum > GAME.UPPER_THRESHOLD) {
-
-         r = 225 + (5 * row) + (5 * col) + Math.floor((5 * Math.random() + 5));
-         g = 87;
-         b = 53 + (2 * row) - (5 * col) + Math.floor((5 * Math.random() + 5));
-
-
-      } else if (datum > GAME.LOWER_THRESHOLD) {
-
-         r = 236;
-         g = 234;
-         b = 147;
-
-      } else {
-
-         r = 296;
-         g = 214;
-         b = 205;
-      }
-
-
-   } else if(juiceLevel == 2) {
-
-      if(datum > GAME.UPPER_THRESHOLD) {
-
-         r = 0;
-         g = 255;
-         b = 0;
-
-
-      } else if (datum > GAME.LOWER_THRESHOLD) {
-
-         r = 255;
-         g = 0;
-         b = 0;
-
-      } else {
-
-         r = 0;
-         g = 0;
-         b = 255;
-      }
-
+colors = 
+{
+   0: {
+         FILL: {
+            UPPER_THRESHOLD: { r: 200, g: 200, b: 200, a: 1 },
+            LOWER_THRESHOLD: { r: 100, g: 100, b: 100, a: 1 },
+            BELOW_THRESHOLD: { r: 20, g: 20, b: 20, a: 1 },
+         },
+         SHADOW: {
+            UPPER_THRESHOLD: { r: 30, g: 110, b: 110, a: 0.5 },
+            LOWER_THRESHOLD: { r: 105, g: 35, b: 40, a: 0.5 },
+            BELOW_THRESHOLD: { r: 30, g: 25, b: 30, a: 0.5 },
+         },
+         STROKE: {
+            UPPER_THRESHOLD: { r: 255, g: 255, b: 255, a: 0 },
+            LOWER_THRESHOLD: { r: 255, g: 255, b: 255, a: 0 },
+            BELOW_THRESHOLD: { r: 255, g: 255, b: 255, a: 0 } 
+         },
+         FACE: {
+            UPPER_THRESHOLD: { r: 255, g: 255, b: 255, a: 1 },
+            LOWER_THRESHOLD: { r: 255, g: 255, b: 255, a: 1 },
+            BELOW_THRESHOLD: { r: 255, g: 255, b: 255, a: 0 } 
+         },
+         BACKGROUND_FILL: [
+            { r: 210, g: 157, b: 225, a: 1 },
+            { r: 193, g: 157, b: 172, a: 1 },
+            { r: 229, g: 233, b: 231, a: 1 },
+            { r: 230, g: 230, b: 110, a: 1 },
+            { r: 228, g: 201, b: 77, a: 1 },
+         ]
+   },
+   1: {
+         FILL: {
+            UPPER_THRESHOLD: { r: 60, g: 218, b: 228, a: 0.95 },
+            //LOWER_THRESHOLD: { r: 60, g: 218, b: 228, a: 0.95 },
+            LOWER_THRESHOLD: { r: 214, g: 73, b: 80, a: 0.95 },
+            BELOW_THRESHOLD: { r: 62, g: 58, b: 65, a: 0.95 },
+         },
+         SHADOW: {
+            UPPER_THRESHOLD: { r: 30, g: 110, b: 110, a: 0.5 },
+            LOWER_THRESHOLD: { r: 105, g: 35, b: 40, a: 0.5 },
+            BELOW_THRESHOLD: { r: 30, g: 25, b: 30, a: 0.5 },
+         },
+         STROKE: {
+            UPPER_THRESHOLD: { r: 255, g: 255, b: 255, a: 0 },
+            LOWER_THRESHOLD: { r: 255, g: 255, b: 255, a: 0 },
+            BELOW_THRESHOLD: { r: 255, g: 255, b: 255, a: 0 } 
+         },
+         FACE: {
+            UPPER_THRESHOLD: { r: 255, g: 255, b: 255, a: 1 },
+            LOWER_THRESHOLD: { r: 255, g: 255, b: 255, a: 1 },
+            BELOW_THRESHOLD: { r: 255, g: 255, b: 255, a: 0 } 
+         },
+         BACKGROUND_FILL: [
+            { r: 210, g: 157, b: 225, a: 1 },
+            { r: 193, g: 157, b: 172, a: 1 },
+            { r: 229, g: 233, b: 231, a: 1 },
+            { r: 230, g: 230, b: 110, a: 1 },
+            { r: 228, g: 201, b: 77, a: 1 },
+         ]
+   },
+   2: {
    }
-
-   return { r: r, g: g, b: b, a: 0.8 };
-
 }
 
 function generate(radius, amount) {
@@ -94,17 +91,24 @@ function generate(radius, amount) {
 function Box(grid, row, col, width, datum) {
    this.row = row;
    this.col = col;
-   this.datum = datum;
+   this.datum = datum * 0.01;
    this.width = width;
+   this.juiceLevel = grid.attributes.juiceLevel;
 
    this.origin = {};
-   this.origin.color = getColor(this.row, this.col, this.datum, grid.attributes.juiceLevel);
-   this.origin.points = generate(this.width, 4);
+   this.points = generate(this.width, 4);
    this.origin.linewidth = 1;
-   this.origin.stroke = "black";
    this.origin.rotation = Math.PI / 4;
    this.origin.scale = 1;
    this.origin.opacity = 1;
+
+   if(this.datum > GAME.UPPER_THRESHOLD) {
+      this.threshold = 'UPPER_THRESHOLD'; 
+   } else if (this.datum > GAME.LOWER_THRESHOLD) {
+      this.threshold = 'LOWER_THRESHOLD'; 
+   } else {
+      this.threshold = 'BELOW_THRESHOLD'; 
+   }
 
    this.disabled = {
       move: false,
@@ -119,42 +123,68 @@ function Box(grid, row, col, width, datum) {
    };
 
 
-   this.shape = new Two.Polygon(this.origin['points'], true);
+   this.shape = new Two.Polygon(this.points, true);
    this.shape['opacity'] = 0;
    this.shape.scale = 1;
-   this.shape.subdivide(30);
+   this.shape.noStroke();
+   //this.shape.subdivide(30);
 
-   this.shadow = new Two.Polygon(this.origin['points'], true);
+   this.shadow = new Two.Polygon(this.points, true);
    this.shadow.translation.set(0,0);
    this.shadow.rotation = Math.PI / 4;
    this.shadow.visible = false;
-   this.shadow.fill = "rgba(50,50,50,0.6)";
+   this.shadow.fill = colorToString(colors[this.juiceLevel]['SHADOW'][this.threshold])
    this.shadow.noStroke();
 
-   this.face = assets[1].clone();
-   this.face.scale = 0.5;
-   this.face.noStroke();
-   this.face.fill = "rgba(255,255,255,0.9)";
-   this.face.visible = true;
+   this.faces = [];
+   for(var i = 0; i < 4; i++) {
+      var face = assets[i].clone();
+      face.scale = 0.3;
+      face.noStroke();
+      face.fill = colorToString(colors[this.juiceLevel]['FACE'][this.threshold])
+      face.visible = false;
+      this.faces.push(face);
+   }
 
-   this.smile = assets[0].clone();
-   this.smile.scale = 0.5;
-   this.smile.noStroke();
-   this.smile.fill = "rgba(255,255,255,0.9)";
-   this.smile.visible = false;
+   this.face = this.faces[randomInt(1,4)];
 
-   this.group = two.makeGroup(this.shadow, this.shape, this.face, this.smile);
+   this.group = two.makeGroup(this.shadow, this.shape, this.faces[0], this.faces[1], this.faces[2], this.faces[3]);
    this.group.translation.set(grid.vectors[this.col].x, grid.vectors[this.row].y); 
    this.group.rotation = 0;
    this.group.scale = 1;
 
    this.group.addTo(grid.group);
-}
 
+   //BLINK[0](this);
+}
 
 Box.prototype.animate = function(fn, vector) {
 
    fn(this, vector);
+}
+
+
+Box.prototype.stretch = function(delta) {
+
+   this.points[0].x = this.points[0].origin.x + delta.x;
+   this.points[2].x = this.points[2].origin.x + delta.x;
+}
+
+var BLINK = {
+   
+   0: function(box) {
+
+         //console.log(box);
+         //box.face.children[0].visible = false; 
+         //box.face.children[1].visible = false; 
+
+
+         setTimeout(function() { 
+            box.face.visible = false;
+         }, 1000);  
+
+         setTimeout(function() { BLINK[0](box) }, (Math.random() * 5000) + 10000);
+      }
 }
 
 var REDRAW_MOUSE_COL = {
@@ -171,6 +201,8 @@ var REDRAW_MOUSE_COL = {
 
       box.group['translation'].x = mouse.x; 
       box.group['translation'].y = grid.vectors[vR].y; 
+
+
    },
 
    2: function(box, mouse) {
@@ -194,6 +226,7 @@ var REDRAW_MOUSE_ROW = {
       var vC = grid.orientation.indexOf(box.col);
 
 
+
       box.group['translation'].x = grid.vectors[vC].x; 
       box.group['translation'].y = mouse.y; 
    },
@@ -212,6 +245,11 @@ var REDRAW_MOUSE = {
       box.group.translation.copy(mouse);
    },
    1: function(box, mouse) {
+      var delta = mouse.clone(); 
+      delta.subSelf(box.group.translation);
+
+      //box.stretch(delta);
+
       box.group.translation.set(mouse.x, mouse.y);
    },
    2: function(box, mouse) {
@@ -260,7 +298,7 @@ var REDRAW = {
             x: box.origin['translation'].x,
             y: box.origin['translation'].y,
          }, 300)
-         .easing(TWEEN.Easing.Cubic.InOut)
+         .easing(TWEEN.Easing.Cubic.Out)
          .onUpdate(function() {
             var deltax = box.shape['translation'].x - this.x;
             var deltay = box.shape['translation'].y - this.y;
@@ -304,9 +342,18 @@ var REDRAW = {
       var redraw = new TWEEN
          .Tween({ x: box.group['translation'].x, y: box.group['translation'].y })
          .to({ x: end.x, y: end.y }, 300)
-         .easing(TWEEN.Easing.Cubic.InOut)
+         .easing(TWEEN.Easing.Cubic.Out)
          .onUpdate(function() {
+
+            var delta = box.group.translation.clone();
+
             box.group['translation'].set(this.x, this.y);
+
+            delta.subSelf(box.group.translation);
+            //box.stretch(delta);
+         })
+         .onComplete(function() {
+            //box.stretch({ x: 0, y: 0 });
          })
 
       if(box.tween['move']) {
@@ -322,33 +369,69 @@ var REDRAW = {
 
 var SWEEP = {
 
+   tween: undefined,
+
    0: function(background) {
 
+      },
+
+   1: function(background) {
+
+         if(SWEEP.tween !== undefined) {
+            return;
+         }
+         //get a random color
+
+         var c = colors[1]['BACKGROUND_FILL'][randomInt(0,5)]
+
          var rect = new Two.Polygon(generate(two.width, 4), true);
-         rect.fill = "rgba(" + Math.floor(Math.random() * 100 + 155) + ",0,0,1)";
+         rect.fill = colorToString(c)
          rect.noStroke();
          rect.visible = false;
 
          background.add(rect);
 
-         var sweep = new TWEEN.Tween({ rect: rect, y: -2 * two.width })
-            .to({ y: 0 }, 500) 
+         var dir = randomInt(0,4); //0 left, 1 top, 2 right, 3 bottom
+         var x, y;
+
+         if(dir == 0) {
+            x = -2 * two.width;
+            y = 0;
+
+         } else if (dir == 1) {
+            y = -2 * two.width;
+            x = 0;
+
+         } else if (dir == 2) {
+            x = 2 * two.width;
+            y = 0;
+
+         } else {
+            y = 2 * two.width;
+            x = 0;
+
+         }
+
+         SWEEP.tween = new TWEEN.Tween({ 
+               rect: rect, 
+               x: x, 
+               y: y
+            })
+            .to({ y: 0, x: 0 }, 500) 
             .delay(50)
             .easing(TWEEN.Easing.Cubic.Out)
             .onStart(function() {
 
-               console.log(this.rect);
                this.rect.visible = true;
                this.rect.translation.set(0, -2 *two.width);
                
             })
             .onUpdate(function() {
 
-               this.rect.translation.set(0, this.y);
+               this.rect.translation.set(this.x, this.y);
 
             })
             .onComplete(function() {
-               console.log(background.children);
                _.each(background.children, function(v, i) {
 
                   if(v.id != this.rect.id) {
@@ -357,11 +440,122 @@ var SWEEP = {
 
                }, this)
 
+               SWEEP.tween = undefined;
+
             })
             .start();
 
 
       } 
+}
+
+var OUR_BUDDY = function(foreground, text) {
+
+   var buddy = assets[4];
+   foreground.add(buddy);
+
+   $('#speech-bubble').html(text);
+   $('#speech-bubble').css('visibility', 'hidden');
+   $('#speech-bubble').css('left', 150+'px');
+
+   var entry = new TWEEN.Tween({ buddy: buddy, x: 400 })
+      .to({ x: 190 }, 200)
+      .easing(TWEEN.Easing.Cubic.Out)
+      .onStart(function() {
+         this.buddy.visible = true;
+
+      })
+      .onUpdate(function() {
+         this.buddy.translation.y = this.x;
+
+      });
+
+   var hover = new TWEEN.Tween({ buddy: buddy, x: 190 })
+      .to({ x: 200 }, 700)
+      .yoyo(true)
+      .repeat(Infinity)
+      .easing(TWEEN.Easing.Cubic.InOut)
+      .onUpdate(function() {
+         this.buddy.translation.y = this.x;
+         $('#speech-bubble').css('top', (this.x+150)+'px');
+      })
+      .onStart(function() {
+         $('#speech-bubble').css('visibility', 'visible');
+      })
+      .onComplete(function() {
+         this.buddy.visible = false;
+      })
+
+   entry.chain(hover).start();
+
+   setTimeout(function() {
+      $(window).one('mousedown', function(e) {
+
+         e.preventDefault();
+         e.stopPropagation();
+         hover.stop();
+         buddy.visible = false;
+         $('#speech-bubble').css('visibility', 'hidden');
+
+      })
+   }, 1000)
+
+}
+
+var BARS = {
+
+   0: function() {
+
+      },
+
+   1: function(foreground, background) {
+
+         var bars = 50;
+         var width = Math.sqrt(two.width*two.width*2) * (1.0/bars);
+
+         for(var i = 0; i < bars; i++) {
+
+            var isTop = !!(i%2);
+            var isLeft = !!((i%4==0) || ((i+1)%4==0));
+
+            var color = colors[1].BACKGROUND_FILL[randomInt(0,5)]; 
+
+            var rect = two.makeRectangle(0, i * width/2 * (isTop?-1:1), two.width-200, width); 
+            rect.fill = colorToString(color);
+            rect.noStroke();
+            rect.visible = false;
+            background.add(rect);
+
+            var dest = (two.width) * (isLeft?-1:1);
+            var start = (two.width) * (isLeft?1:-1);
+
+            BARS.tween = new TWEEN.Tween({ x: start, rect: rect, i: i })
+               .to({ x: dest}, 500)
+               .delay(5 * i)
+               .easing(TWEEN.Easing.Cubic.Out)
+               .onStart(function() {
+                  this.rect.visible = true;
+
+                  if(this.i == 0) {
+                     background.rotation = Math.random() * Math.PI * 2;
+                  }
+               })
+               .onUpdate(function() {
+                  this.rect.translation.x = this.x;
+               })
+               .onComplete(function() {
+                  background.remove(this.rect);
+
+                  if(this.i == 50) {
+                     background.rotation = 0;
+                  }
+               })
+               .start();
+         }
+
+
+      } 
+
 }
 
 var JUMP = {
@@ -455,8 +649,6 @@ var SPLAT = {
          var y = 0;
 
          for(var i = 5; i > 0; i--) {
-
-            console.log(i);
 
             var great_shadow = assets[2].clone();
             great_shadow.fill = (i == 1 ? "blue" : "black");
@@ -595,19 +787,23 @@ var SQUARES = {
 
          for(var i = 0; i < 10; i++) {
 
-            var rect = new Two.Polygon(generate((two.width / 10) * i, 4), true);
+            var rect = new Two.Polygon(generate((two.width / 10) * i, randomInt(4,8)), true);
             rect.fill = "rgba(255,255,255,0)";
-            rect.linewidth = 2;
-            rect.stroke = "rgba(50,50,50,1)";
+            rect.linewidth = 4;
+            rect.stroke = "rgba(100,100,100,1)";
             rect.visible = false;
+            //rect.rotation= ;
             background.add(rect);
 
-            var settle = new TWEEN.Tween({ rect: rect })
-               .to({ }, 300)
+            var settle = new TWEEN.Tween({ scale: 1, rect: rect })
+               .to({ scale: 0.5 }, 300)
                .delay(50 * i)
+               .easing(TWEEN.Easing.Cubic.Out)
                .onStart(function() {
                   this.rect.visible = true;
-                  this.rect.rotation = this.rotation;
+               })
+               .onUpdate(function() {
+                  this.rect.scale = this.scale;
                })
                .onComplete(function() {
                   background.remove(this.rect);
@@ -623,28 +819,29 @@ var SQUARES = {
 }
 
 var SETTLE = {
-
+   tween: undefined,
+   complete: false,
    0: function(box) {
 
          box.shape['opacity'] = box.origin['opacity'];
          box.shape['rotation'] = box.origin['rotation'];
-         box.shape['fill'] = colorToString(box.origin['color']);
+         box.shape['fill'] = colorToString(colors[0]['FILL'][box.threshold]);
          box.shape['opacity'] = 1;
 
       },
    1: function(box) {
 
          var offset = (Math.random() * 100) + 400;
-         var delay = (Math.random() * 300) + 1000;
+         var delay = (Math.random() * 500) + 200;
 
-         var rotationOffset = box.origin['rotation'] + (Math.random() * 2) - 0.8;
+         var rotationOffset = box.origin['rotation'] + (Math.random() * 2) - 1;
 
-         var settle = new TWEEN.Tween(
+         SETTLE.tween = new TWEEN.Tween(
                { 
                   y: -offset,
                   o: 0,
                   r: rotationOffset,
-                  s: 0,
+                  s: 1.5,
                   sh: 0
                })
             .to(
@@ -656,7 +853,7 @@ var SETTLE = {
                   sh: 0.9
                }, 500)
             .delay(delay)
-            .easing(TWEEN.Easing.Back.Out)
+            .easing(TWEEN.Easing.Bounce.Out)
             .onUpdate(function() {
                box.shape['translation'].y = this.y;
                box.shape['opacity'] = this.o;
@@ -669,16 +866,16 @@ var SETTLE = {
                box.shadow.scale = 0;
 
                box.face.visible = false;
-               box.smile.visible = false;
 
                box.shape['opacity'] = box.origin['opacity'];
                box.shape['rotation'] = box.origin['rotation'];
-               box.shape['fill'] = colorToString(box.origin['color']);
+               box.shape['fill'] = colorToString(colors[1]['FILL'][box.threshold]);
                box.shape['translation'].x = 0;
             })
             .onComplete(function() {
                //box.shadow.visible = false;
                box.face.visible = true;
+               SETTLE.complete = true;
             })
             .start();
 
@@ -692,15 +889,15 @@ var SETTLE = {
       },
 }
 
-
-var OUTLINE = {
+var OUTLINE_EXTRA = {
 
    0: function(box) {
          if(box.disabled['highlight']) {
             return;
          }
          box.shape.stroke = "black";
-         box.shape.linewidth = 10;
+         box.shape.linewidth = 4;
+         box.group.toFront();
       },
    
    1: function(box) {
@@ -717,25 +914,28 @@ var OUTLINE = {
                { 
                   t: box.shape['linewidth'],
                   tr: 0,//box.shape['translation'].x,
-                  sh: 0//box.shadow['translation'].y
+                  sh: 0,//box.shadow['translation'].y
+                  o: box.shadow['opacity']
                })
-            .to({ t: 5, tr: -10, sh: 5 }, 500)
+            .to({ t: 2.5, tr: -5, sh: 2.5, o: 0.9 }, 500)
             .easing(TWEEN.Easing.Elastic.Out)
             .onUpdate(function() {
-               //box.shape.linewidth = box.origin['linewidth'] + this.t;
                box.shape.translation.x = this.tr;
                box.shape.translation.y = this.tr;
+
                box.shadow.translation.x = this.sh;
                box.shadow.translation.y = this.sh;
 
-               box.smile.translation.x = this.tr;
-               box.smile.translation.y = this.tr;
+
+               box.face.translation.x = this.tr;
+               box.face.translation.y = this.tr;
+
+               box.shadow.opacity = this.o;
             })
             .onStart(function() {
-               //box.shadow.visible = true;
-               //box.shape.stroke = "orangered";
-               box.face.visible = false;
-               box.smile.visible = true;
+               //box.face.visible = false;
+
+               box.group.toFront();
 
             })
             .start();
@@ -746,12 +946,137 @@ var OUTLINE = {
       }
 }
 
+
+var OUTLINE = {
+
+   0: function(box) {
+         if(box.disabled['highlight']) {
+            return;
+         }
+         box.shape.stroke = "black";
+         box.shape.linewidth = 10;
+
+         //ensures that the highlighted box will be moved to front after all the others
+         setTimeout(function() {
+            box.group.toFront();
+         }, 20)
+      },
+   
+   1: function(box) {
+         if(box.disabled['highlight']) {
+            return;
+         }
+
+         if(box.tween['highlight'] !== undefined) {
+            box.tween['highlight'].stop();
+         }
+
+
+         box.tween['highlight'] = new TWEEN.Tween(
+               { 
+                  t: box.shape['linewidth'],
+                  tr: 0,//box.shape['translation'].x,
+                  sh: 0,//box.shadow['translation'].y
+                  o: box.shadow['opacity']
+               })
+            .to({ t: 5, tr: -10, sh: 5, o: 0.9 }, 500)
+            .delay(20)
+            .easing(TWEEN.Easing.Elastic.Out)
+            .onUpdate(function() {
+               box.shape.translation.x = this.tr;
+               box.shape.translation.y = this.tr;
+
+               box.shadow.translation.x = this.sh;
+               box.shadow.translation.y = this.sh;
+
+               box.face.translation.x = this.tr;
+               box.face.translation.y = this.tr;
+
+               box.shadow.opacity = this.o;
+            })
+            .onStart(function() {
+               //box.face.visible = false;
+
+               box.group.toFront();
+
+            })
+            .start();
+      },
+
+   2: function(box) {
+
+      }
+}
+
+var UNOUTLINE_EXTRA = {
+   0: function(box) {
+
+         box.shape.noStroke();
+         //box.shape.stroke = 'black';
+         //box.shape.linewidth = 1;
+      },
+   1: function(box) {
+
+      if(box.tween['highlight'] !== undefined) {
+         box.tween['highlight'].stop();
+      }
+
+      box.tween['highlight'] = new TWEEN.Tween(
+            { 
+               tr: box.shape['translation'].x,
+               sh: box.shadow['translation'].x,
+               o: box.shadow['opacity']
+            })
+         .to({ tr: 0, sh: 0, o: 0.5 }, 400)
+         .easing(TWEEN.Easing.Cubic.Out)
+         .onUpdate(function() {
+            //box.shape.linewidth = box.origin['linewidth'] + this.t;
+            box.shape.translation.x = this.tr;
+            box.shape.translation.y = this.tr;
+            box.shadow.translation.x = this.sh;
+            box.shadow.translation.y = this.sh;
+
+            box.face.translation.x = this.tr;
+            box.face.translation.y = this.tr;
+
+            box.shadow.opacity = this.o;
+         })
+         .onComplete(function() {
+
+
+         })
+         .onStart(function() {
+            //box.face.visible = false;
+            //box.face = box.faces[randomInt(0,3)];
+            //box.face.visible = true;
+
+
+         })
+         .start();
+
+      }
+
+}
+
+var SMILE_ON = function(box) {
+   box.face.visible = false;
+   box.face = box.faces[0];
+   box.face.visible = true;
+
+}
+
+var SMILE_OFF = function(box) {
+   box.face.visible = false;
+   box.face = box.faces[randomInt(0,3)];
+   box.face.visible = true;
+
+}
+
 var UNOUTLINE = {
 
    0: function(box) {
 
-         box.shape.stroke = box.origin['stroke'];
-         box.shape.linewidth = box.origin['linewidth'];
+         box.shape.noStroke();
       },
    
    1: function(box) {
@@ -763,9 +1088,10 @@ var UNOUTLINE = {
          box.tween['highlight'] = new TWEEN.Tween(
                { 
                   tr: box.shape['translation'].x,
-                  sh: box.shadow['translation'].x 
+                  sh: box.shadow['translation'].x,
+                  o: box.shadow['opacity']
                })
-            .to({ tr: 0, sh: 0 }, 400)
+            .to({ tr: 0, sh: 0, o: 0.5 }, 400)
             .easing(TWEEN.Easing.Cubic.Out)
             .onUpdate(function() {
                //box.shape.linewidth = box.origin['linewidth'] + this.t;
@@ -776,20 +1102,149 @@ var UNOUTLINE = {
 
                box.face.translation.x = this.tr;
                box.face.translation.y = this.tr;
+
+               box.shadow.opacity = this.o;
             })
             .onComplete(function() {
-               //box.shadow.visible = false;
-               //box.shadow.translation.set(0,0);
-               //box.shape.stroke = "orangered";
 
             })
             .onStart(function() {
-               box.smile.visible = false;
-               box.face.visible = true;
+              // box.face = box.faces[randomInt(0,3)];
+               
             })
             .start();
 
       }
+}
+
+var SLIDE_IN = {
+   0: function(box) {
+
+      },
+   1: function(box) {
+
+         var slide = new TWEEN.Tween({ x: box.shape.translation.x }) 
+            .to({ x: 0 }, 200)
+            .easing(TWEEN.Easing.Cubic.Out)
+            .onUpdate(function() {
+               box.shape.translation.x = this.x;
+               box.shadow.translation.x = this.x;
+               box.face.translation.x = this.x;
+
+               box.shape.translation.y = -this.x;
+               box.shadow.translation.y = -this.x;
+               box.face.translation.y = -this.x;
+            })
+            .onStart(function() {
+
+               box.group.opacity = 1;
+            })
+            .onComplete(function() {
+               grid.disabled = false;
+            })
+            .start();
+
+      },
+   2: function(box) {
+
+      }
+}
+
+var SLIDE_OUT = {
+   0: function(box) {
+
+      },
+   1: function(box) {
+
+         if(box.group.translation.y > box.group.translation.x) {
+            var destination = -two.width * 0.2;
+         } else if(box.group.translation.y == box.group.translation.x) {
+            var destination = (Math.random() > 0.5 ? -two.width: two.width) * 0.2;
+         } else {
+            var destination = two.width * 0.2;
+         }
+
+         var slide = new TWEEN.Tween({ x: box.shape.translation.x }) 
+            .to({ x: destination }, 200)
+            .easing(TWEEN.Easing.Cubic.Out)
+            .onUpdate(function() {
+               box.shape.translation.x = this.x;
+               box.shadow.translation.x = this.x;
+               box.face.translation.x = this.x;
+
+               box.shape.translation.y = -this.x;
+               box.shadow.translation.y = -this.x;
+               box.face.translation.y = -this.x;
+
+            })
+            .onStart(function() {
+               grid.disabled = true;
+               box.group.opacity = 0.3;
+            })
+            .start();
+
+      },
+   2: function(box) {
+
+      }
+}
+
+var FADE_IN = {
+
+   0: function(box) {
+
+      },
+   1: function(box) {
+
+         var delay = Math.random() * 200;
+
+         var fade = new TWEEN.Tween({ s: box.group['scale'], o: box.group['opacity'] })
+            .to({ s: 1, o: 1 }, 100)
+            .delay(delay)
+            .easing(TWEEN.Easing.Cubic.Out)
+            .onUpdate(function() {
+               box.group['scale'] = this.s;
+               //box.group['opacity'] = this.o;
+            })
+            .onStart(function() {
+            })
+            .start();
+
+      },
+   2: function(box) {
+
+      }
+
+}
+
+var FADE_OUT = {
+
+   0: function(box) {
+
+      },
+   1: function(box) {
+
+         var delay = Math.random() * 200;
+         //var delay = 50 + (grid.orientation.indexOf(box.row) * grid.orientation.indexOf(box.col) * 10);
+
+         var fade = new TWEEN.Tween({ s: box.group['scale'], o: box.group['opacity'] })
+            .to({ s: 0, o: 0 }, 100)
+            .delay(delay)
+            .easing(TWEEN.Easing.Cubic.Out)
+            .onUpdate(function() {
+               box.group['scale'] = this.s;
+               //box.group['opacity'] = this.o;
+
+            })
+            .onStart(function() {
+            })
+            .start();
+
+      },
+   2: function(box) {
+
+      }
+
 }
 
 var POP_2 = function(box) {

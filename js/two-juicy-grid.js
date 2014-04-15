@@ -19,6 +19,8 @@ function Grid(numRows, width, data, juiceLevel) {
       scored: []
    };
 
+   this.disabled = false;
+
    this.background = two.makeGroup();
    this.group = two.makeGroup();
    this.foreground = two.makeGroup();
@@ -33,9 +35,39 @@ function Grid(numRows, width, data, juiceLevel) {
    this.setVectors();
    this.setBoxes();
 
-   _.each(this.boxes.all, function(b) {
-      b.animate(SETTLE[this.attributes.juiceLevel]);
-   }, this);
+   //load time... timeout required for grid to actually be initialized
+   setTimeout(function() { 
+      _.each(grid.boxes.all, function(b) {
+         b.animate(SETTLE[grid.attributes.juiceLevel]);
+      });
+
+      SWEEP[grid.attributes.juiceLevel](grid.background); 
+   }, 500);
+
+   $(window)
+   .on('mousemove', function(e) {
+      e.preventDefault();
+      mouse.x = e.clientX - svg.left;
+      mouse.y = e.clientY - svg.top;
+
+      grid.handleMousemove(mouse);
+
+   })
+   .on('mousedown', function(e) {
+      e.preventDefault();
+
+      mouse.x = e.clientX - svg.left;
+      mouse.y = e.clientY - svg.top;
+
+      grid.handleMousedown(mouse);
+   })
+   .on('mouseup', function(e) {
+      e.preventDefault();
+      grid.handleMouseup(mouse);
+   });
+
+   $('.splash').css('display', 'none');
+
 }
 
 Grid.prototype.setBoxes = function() {
@@ -73,6 +105,35 @@ Grid.prototype.setVectors = function() {
    }
 }
 
+Grid.prototype.getClustersOfSize = function(clusterSize) {
+
+   var numRows = this.attributes.numRows;
+
+   return _.filter(
+      _.map(
+         _.range(numRows-clusterSize+1), 
+
+         function(clusterStart) {
+            return { 
+               start: clusterStart, 
+               size: clusterSize, 
+               cluster: this.getBoxesFromCluster(clusterStart, clusterSize) 
+            };
+         },
+
+         this
+      ),
+
+      function(clusterObject) {
+
+         return _.every(clusterObject.cluster, function(box) {
+            return box.datum >= GAME.LOWER_THRESHOLD;
+         })
+      }
+
+   )
+}
+
 Grid.prototype.getBoxesFromCluster = function(clusterStart, clusterSize) {
 
    return _.filter(this.boxes.all, function(box) {
@@ -82,8 +143,8 @@ Grid.prototype.getBoxesFromCluster = function(clusterStart, clusterSize) {
 
       return (this.orientation.indexOf(box.row) >= clusterStart 
                && this.orientation.indexOf(box.col) >= clusterStart 
-               && this.orientation.indexOf(box.row) <= clusterStart + clusterSize
-               && this.orientation.indexOf(box.col) <= clusterStart + clusterSize);
+               && this.orientation.indexOf(box.row) < clusterStart + clusterSize
+               && this.orientation.indexOf(box.col) < clusterStart + clusterSize);
    }, this);
 }
 
@@ -154,13 +215,20 @@ Grid.prototype.getNearestIndex = function(mouse) {
 
    var min = _.min(r);
 
-   var i = r.indexOf(min);
-
-   return i;
+   if(min < 5000) { //magic distance
+      return r.indexOf(min);
+   } else {
+      return null;
+   }
 }
 
 Grid.prototype.getNearestRow = function(mouse) {
-   return this.orientation[this.getNearestIndex(mouse)];
+   var i = this.getNearestIndex(mouse);
+   if(i == null) {
+      return null;
+   } else {
+      return this.orientation[i];
+   }
 }
 
 Grid.prototype.getDistanceToIndex = function(index, vector) {
@@ -173,6 +241,10 @@ Grid.prototype.getDistanceToIndex = function(index, vector) {
 }
 
 Grid.prototype.select = function(row) {
+
+   if(row == null) {
+      return;
+   }
 
    this.selected.active = true;
    this.selected.vector = {};
@@ -187,13 +259,44 @@ Grid.prototype.select = function(row) {
 
 }
 
+Grid.prototype.newCalcScore = function() {
+
+   var numRows = this.attributes.numRows;
+
+   this.boxes.scored = [];
+   this.boxes.unscored = [];
+   
+   var ret = _.flatten(_.map(
+      _.range(numRows, 1, -1),
+      function(clusterSize) {
+         //console.log(clusterSize);
+         return this.getClustersOfSize(clusterSize);
+      },
+      this
+   ))
+
+   _.each(ret, function(cluster) {
+
+      if(_.intersection(cluster.cluster, this.boxes.scored).length == 0) {
+         this.boxes.scored = this.boxes.scored.concat(cluster.cluster);
+      }
+
+   }, this)
+
+   //console.log(this.boxes.scored);
+   this.boxes.unscored = _.difference(this.boxes.all, this.boxes.scored);
+
+}
+
 Grid.prototype.calcScore = function() {
 
    this.boxes.scored = [];
+   this.clusters = [];
 
-   for(var clusterStart = 0; clusterStart < this.attributes.numRows; clusterStart++) {
+   for(var clusterStart = 0, bestCluster; clusterStart < this.attributes.numRows; clusterStart++) {
 
-      for(var clusterSize = 0; clusterSize < this.attributes.numRows-clusterStart; clusterSize++) {
+      for(var clusterSize = 1; clusterSize < this.attributes.numRows-clusterStart; clusterSize++) {
+         console.log(clusterStart, clusterSize);
 
          var cluster = this.getBoxesFromCluster(clusterStart, clusterSize);
 
@@ -203,12 +306,19 @@ Grid.prototype.calcScore = function() {
 
          if(isCluster) {
             this.boxes.scored = _.union(this.boxes.scored, cluster);
+            //this.clusters.push({start: clusterStart, size: clusterSize, cluster: cluster}); 
+            bestCluster = { start: clusterStart, size: clusterSize, cluster: cluster };
+
          } else {
             break;
          }
-
       }
+
+      this.clusters.push(bestCluster);
    }
+
+   this.boxes.unscored = _.difference(this.boxes.all, this.boxes.scored);
+   console.log(this.clusters);
 
 }
 
@@ -226,40 +336,81 @@ Grid.prototype.highlight = function(row) {
       return;
    }
 
+   _.each(this.boxes.highlighted_extra, function(b) {
+      b.animate(UNOUTLINE_EXTRA[this.attributes.juiceLevel]);
+   }, this);
+
    _.each(this.boxes.highlighted, function(b) {
       b.animate(UNOUTLINE[this.attributes.juiceLevel]);
    }, this);
 
-   _.each(this.boxes.highlighted_extra, function(b) {
-      b.animate(UNOUTLINE[this.attributes.juiceLevel]);
-   }, this);
 
    this.highlighted.active = true;
    this.highlighted.row = row;
+
+   if(row == null) { //unhighlight if 
+      document.querySelector("#game-container").classList.remove("hover");
+      this.boxes.highlighted = [];
+      this.boxes.highlighted_extra = [];
+      return;
+   }
+
+   document.querySelector("#game-container").classList.add("hover");
+
    this.boxes.highlighted = this.getBoxesFromRowCol(this.highlighted.row);
    this.boxes.highlighted_extra = this.getBoxesFromRowOrCol(this.highlighted.row);
+
+   this.boxes.highlighted_extra = _.reject(this.boxes.highlighted_extra, function(b) {
+      return b.row == b.col;
+   })
 
    _.each(this.boxes.highlighted, function(b) {
       b.animate(OUTLINE[this.attributes.juiceLevel]);
    }, this);
 
    _.each(this.boxes.highlighted_extra, function(b) {
-      b.animate(OUTLINE[this.attributes.juiceLevel]);
+      b.animate(OUTLINE_EXTRA[this.attributes.juiceLevel]);
    }, this);
 }
 
 Grid.prototype.deselect = function() {
 
-   this.calcScore();
+   if(!this.selected.active) {
+      return;
+   }
+
+   this.newCalcScore();
 
    _.each(this.boxes.selected_all, function(b) { 
       b.animate(REDRAW[this.attributes.juiceLevel]);
    }, this)
 
-   _.each(this.boxes.scored, function(b) {
-      //b.animate(SHINE[this.attributes.juiceLevel]);
 
-   }, this);
+   if(this.boxes.scored.length > 0) {
+
+      SWEEP[grid.attributes.juiceLevel](grid.background); 
+      SQUARES[grid.attributes.juiceLevel](grid.background); 
+
+      _.each(this.boxes.unscored, function(b) {
+         b.animate(SLIDE_OUT[this.attributes.juiceLevel]);
+         //b.animate(SHINE[this.attributes.juiceLevel]);
+
+      }, this);
+
+      _.each(this.boxes.scored, function(b) {
+         //b.animate(SHINE[this.attributes.juiceLevel]);
+         //b.animate(SHINE[this.attributes.juiceLevel]);
+         b.animate(SMILE_ON);
+
+      }, this);
+
+      setTimeout(function() { 
+         _.each(grid.boxes.unscored, function(b) {
+            b.animate(SLIDE_IN[grid.attributes.juiceLevel]);
+         });
+
+      }, 500);
+   }
 
    //SQUARES[this.attributes.juiceLevel](grid.background);
    //SWEEP[0](grid.background);
@@ -288,10 +439,18 @@ Grid.prototype.swapOrientation = function(indexToSwap) {
 }
 
 Grid.prototype.handleMouseup = function(mouse) {
+   if(this.disabled) {
+      return;
+   }
+
    this.deselect();
 }
 
 Grid.prototype.handleMousedown = function(mouse) {
+
+   if(this.disabled) {
+      return;
+   }
 
    mouse.subSelf(this.group.translation);
 
@@ -299,10 +458,15 @@ Grid.prototype.handleMousedown = function(mouse) {
       return;
    }
 
-   this.select(this.getNearestRow(mouse));
+   this.select(this.highlighted.row);
 }
 
 Grid.prototype.handleMousemove = function(mouse) {
+
+
+   if(this.disabled) {
+      return;
+   }
 
 
    //put mouse in Grid's matrix
@@ -314,21 +478,31 @@ Grid.prototype.handleMousemove = function(mouse) {
       return;
    }
 
+   var diag = new Two.Vector(1,1);
+   diag.normalize();
+
+   var draw = diag.dot(mouse);
+   diag.multiplyScalar(draw);
+
    _.each(this.boxes.selected, function(b) {
-      b.animate(REDRAW_MOUSE[0], mouse);
-   });
+      b.animate(REDRAW_MOUSE[this.attributes.juiceLevel], diag);
+   }, this);
 
    _.each(this.boxes.selected_row, function(b) {
-      b.animate(REDRAW_MOUSE_ROW[0], mouse);
+      b.animate(REDRAW_MOUSE_ROW[0], diag);
    });
 
    _.each(this.boxes.selected_col, function(b) {
-      b.animate(REDRAW_MOUSE_COL[0], mouse);
+      b.animate(REDRAW_MOUSE_COL[0], diag);
    });
 
-   var mouseToSel = this.getDistanceToIndex(this.selected.index, mouse); 
-   var mouseToPrev = this.getDistanceToIndex(this.selected.index-1, mouse); 
-   var mouseToNext = this.getDistanceToIndex(this.selected.index+1, mouse); 
+   var mouseToSel = this.getDistanceToIndex(this.selected.index, diag); 
+   var mouseToPrev = this.getDistanceToIndex(this.selected.index-1, diag); 
+   var mouseToNext = this.getDistanceToIndex(this.selected.index+1, diag); 
+
+   if(mouseToPrev > 5000 && mouseToNext > 5000) { //only swap if we're close
+      return;
+   }
 
    if(mouseToPrev < mouseToSel) {
       this.swapOrientation(this.selected.index-1);

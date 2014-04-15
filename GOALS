@@ -1,0 +1,22 @@
+loading screen (choose tutorial and start or just start)
+   1) tutorial is part of puzzle
+   2) tutorial is separate from puzzle
+
+add word feedback for on deselect
+
+add more graphics
+
+1) larger crazier explosions each time there is a bigger cluster than previous largest cluster
+   2) different animation based on size of cluster
+      3) each animations has a first time effect (larger and crazier)
+         also a secondary effect for when that size cluster is reached again
+
+add character for juicy on right side
+   a) he is funny
+
+BARS
+   -various sized bars (very skinny) introduced and they move slightly
+
+SCREEN SHAKE
+
+

@@ -5774,6 +5774,27 @@ var Backbone = Backbone || {};
 
     },
 
+    toFront: function() {
+
+      object = this;
+      parent = this.parent;
+      children = this.children;
+      id = this.id;
+
+          if (parent) {
+            delete parent.children[id];
+            index = _.indexOf(parent.additions, id);
+            if (index >= 0) {
+              parent.additions.splice(index, 1);
+            }
+          }
+          // Add it to this group and update parent-child relationship.
+          parent.children[id] = object;
+          object.parent = parent;
+          parent.additions.push(id);
+          parent._flagAdditions = true;
+    },
+
     /**
      * Remove an object from the group.
      */
