@@ -38,10 +38,10 @@ function Grid(numRows, width, data, juiceLevel) {
    //load time... timeout required for grid to actually be initialized
    setTimeout(function() { 
       _.each(grid.boxes.all, function(b) {
-         b.animate(SETTLE[grid.attributes.juiceLevel]);
+         b.SETTLE();
       });
 
-      SWEEP[grid.attributes.juiceLevel](grid.background); 
+      SWEEP(grid.foreground, grid.background); 
    }, 500);
 
    $(window)
@@ -337,11 +337,11 @@ Grid.prototype.highlight = function(row) {
    }
 
    _.each(this.boxes.highlighted_extra, function(b) {
-      b.animate(UNOUTLINE_EXTRA[this.attributes.juiceLevel]);
+      b.UNOUTLINE_EXTRA();
    }, this);
 
    _.each(this.boxes.highlighted, function(b) {
-      b.animate(UNOUTLINE[this.attributes.juiceLevel]);
+      b.UNOUTLINE();
    }, this);
 
 
@@ -365,12 +365,24 @@ Grid.prototype.highlight = function(row) {
    })
 
    _.each(this.boxes.highlighted, function(b) {
-      b.animate(OUTLINE[this.attributes.juiceLevel]);
+      b.OUTLINE();
    }, this);
 
    _.each(this.boxes.highlighted_extra, function(b) {
-      b.animate(OUTLINE_EXTRA[this.attributes.juiceLevel]);
+      b.OUTLINE_EXTRA();
    }, this);
+}
+
+Grid.prototype.enableMouse = function() {
+
+   this.disabled = false;
+
+}
+
+Grid.prototype.disableMouse = function() {
+
+   this.disabled = true;
+
 }
 
 Grid.prototype.deselect = function() {
@@ -382,17 +394,17 @@ Grid.prototype.deselect = function() {
    this.newCalcScore();
 
    _.each(this.boxes.selected_all, function(b) { 
-      b.animate(REDRAW[this.attributes.juiceLevel]);
+      b.REDRAW();
    }, this)
 
 
    if(this.boxes.scored.length > 0) {
 
-      SWEEP[grid.attributes.juiceLevel](grid.background); 
-      SQUARES[grid.attributes.juiceLevel](grid.background); 
+      SWEEP(grid.foreground, grid.background); 
+      randomChoice(background_animations)(grid.foreground, grid.background); 
 
       _.each(this.boxes.unscored, function(b) {
-         b.animate(SLIDE_OUT[this.attributes.juiceLevel]);
+         b.SLIDE_OUT();
          //b.animate(SHINE[this.attributes.juiceLevel]);
 
       }, this);
@@ -400,13 +412,13 @@ Grid.prototype.deselect = function() {
       _.each(this.boxes.scored, function(b) {
          //b.animate(SHINE[this.attributes.juiceLevel]);
          //b.animate(SHINE[this.attributes.juiceLevel]);
-         b.animate(SMILE_ON);
+         b.SMILE_ON();
 
       }, this);
 
       setTimeout(function() { 
          _.each(grid.boxes.unscored, function(b) {
-            b.animate(SLIDE_IN[grid.attributes.juiceLevel]);
+            b.SLIDE_IN();
          });
 
       }, 500);
@@ -432,7 +444,7 @@ Grid.prototype.swapOrientation = function(indexToSwap) {
    this.orientation[indexToSwap] = tmp;
 
    _.each(toSwap, function(b) {
-      b.animate(REDRAW[this.attributes.juiceLevel]);
+      b.REDRAW();
    }, this)
 
    this.selected.index = this.orientation.indexOf(this.selected.row);
@@ -485,15 +497,15 @@ Grid.prototype.handleMousemove = function(mouse) {
    diag.multiplyScalar(draw);
 
    _.each(this.boxes.selected, function(b) {
-      b.animate(REDRAW_MOUSE[this.attributes.juiceLevel], diag);
+      b.REDRAW_MOUSE(diag);
    }, this);
 
    _.each(this.boxes.selected_row, function(b) {
-      b.animate(REDRAW_MOUSE_ROW[0], diag);
+      b.REDRAW_MOUSE_ROW(diag);
    });
 
    _.each(this.boxes.selected_col, function(b) {
-      b.animate(REDRAW_MOUSE_COL[0], diag);
+      b.REDRAW_MOUSE_COL(diag);
    });
 
    var mouseToSel = this.getDistanceToIndex(this.selected.index, diag); 

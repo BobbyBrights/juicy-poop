@@ -28,6 +28,10 @@ var data = [
    [95.0679161166,98.7604175933,89.0050716646,98.9670501392,98.9234718915,90.6918164338,100,91.239007135,99.4871201307,89.7211724499],
 ]
 
+$('#bubbles').on('click', function(e) {
+   BUBBLES(grid.foreground, grid.background);
+})
+
 $('#buddy').on('click', function(e) {
    OUR_BUDDY(grid.foreground, "TESTING THIS TEXT");
 })
