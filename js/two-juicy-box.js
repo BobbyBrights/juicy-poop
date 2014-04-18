@@ -1,83 +1,83 @@
 function colorToString(color) {
    return 'rgba(' + color.r + ',' + color.g + ',' + color.b + ',' + color.a + ')';
-}
+         }
 
-function randomInt(beginRange, endRange) {
-   return Math.floor(Math.random() * (endRange-beginRange) + beginRange);
-}
+         function randomInt(beginRange, endRange) {
+            return Math.floor(Math.random() * (endRange-beginRange) + beginRange);
+         }
 
-function randomChoice(array) {
-   return array[Math.floor(Math.random() * array.length)];
-}
+         function randomChoice(array) {
+            return array[Math.floor(Math.random() * array.length)];
+         }
 
-function randomBool() {
-   return Math.random() > 0.5 ? true: false;
-}
+         function randomBool() {
+            return Math.random() > 0.5 ? true: false;
+         }
 
-colors = 
-{
-   0: {
-         FILL: {
-            UPPER_THRESHOLD: { r: 200, g: 200, b: 200, a: 1 },
-            LOWER_THRESHOLD: { r: 100, g: 100, b: 100, a: 1 },
-            BELOW_THRESHOLD: { r: 20, g: 20, b: 20, a: 1 },
-         },
-         SHADOW: {
-            UPPER_THRESHOLD: { r: 30, g: 110, b: 110, a: 0.5 },
-            LOWER_THRESHOLD: { r: 105, g: 35, b: 40, a: 0.5 },
-            BELOW_THRESHOLD: { r: 30, g: 25, b: 30, a: 0.5 },
-         },
-         STROKE: {
-            UPPER_THRESHOLD: { r: 255, g: 255, b: 255, a: 0 },
-            LOWER_THRESHOLD: { r: 255, g: 255, b: 255, a: 0 },
-            BELOW_THRESHOLD: { r: 255, g: 255, b: 255, a: 0 } 
-         },
-         FACE: {
-            UPPER_THRESHOLD: { r: 255, g: 255, b: 255, a: 1 },
-            LOWER_THRESHOLD: { r: 255, g: 255, b: 255, a: 1 },
-            BELOW_THRESHOLD: { r: 255, g: 255, b: 255, a: 0 } 
-         },
-         BACKGROUND_FILL: [
-            { r: 210, g: 157, b: 225, a: 1 },
-            { r: 193, g: 157, b: 172, a: 1 },
-            { r: 229, g: 233, b: 231, a: 1 },
-            { r: 230, g: 230, b: 110, a: 1 },
-            { r: 228, g: 201, b: 77, a: 1 },
-         ]
-   },
-   1: {
-         FILL: {
-            UPPER_THRESHOLD: { r: 60, g: 218, b: 228, a: 0.95 },
-            //LOWER_THRESHOLD: { r: 60, g: 218, b: 228, a: 0.95 },
-            LOWER_THRESHOLD: { r: 214, g: 73, b: 80, a: 0.95 },
-            BELOW_THRESHOLD: { r: 62, g: 58, b: 65, a: 0.95 },
-         },
-         SHADOW: {
-            UPPER_THRESHOLD: { r: 30, g: 110, b: 110, a: 0.5 },
-            LOWER_THRESHOLD: { r: 105, g: 35, b: 40, a: 0.5 },
-            BELOW_THRESHOLD: { r: 30, g: 25, b: 30, a: 0.5 },
-         },
-         STROKE: {
-            UPPER_THRESHOLD: { r: 255, g: 255, b: 255, a: 0 },
-            LOWER_THRESHOLD: { r: 255, g: 255, b: 255, a: 0 },
-            BELOW_THRESHOLD: { r: 255, g: 255, b: 255, a: 0 } 
-         },
-         FACE: {
-            UPPER_THRESHOLD: { r: 255, g: 255, b: 255, a: 1 },
-            LOWER_THRESHOLD: { r: 255, g: 255, b: 255, a: 1 },
-            BELOW_THRESHOLD: { r: 255, g: 255, b: 255, a: 0 } 
-         },
-         BACKGROUND_FILL: [
-            { r: 210, g: 157, b: 225, a: 1 },
-            { r: 193, g: 157, b: 172, a: 1 },
-            { r: 229, g: 233, b: 231, a: 1 },
-            { r: 230, g: 230, b: 110, a: 1 },
-            { r: 228, g: 201, b: 77, a: 1 },
-         ]
-   },
-   2: {
-   }
-}
+         colors = 
+         {
+            0: {
+                  FILL: {
+                           UPPER_THRESHOLD: { r: 200, g: 200, b: 200, a: 1 },
+          LOWER_THRESHOLD: { r: 100, g: 100, b: 100, a: 1 },
+          BELOW_THRESHOLD: { r: 20, g: 20, b: 20, a: 1 },
+                        },
+                  SHADOW: {
+                             UPPER_THRESHOLD: { r: 30, g: 110, b: 110, a: 0.5 },
+                             LOWER_THRESHOLD: { r: 105, g: 35, b: 40, a: 0.5 },
+                             BELOW_THRESHOLD: { r: 30, g: 25, b: 30, a: 0.5 },
+                          },
+                  STROKE: {
+                             UPPER_THRESHOLD: { r: 255, g: 255, b: 255, a: 0 },
+                             LOWER_THRESHOLD: { r: 255, g: 255, b: 255, a: 0 },
+                             BELOW_THRESHOLD: { r: 255, g: 255, b: 255, a: 0 } 
+                          },
+                  FACE: {
+                           UPPER_THRESHOLD: { r: 255, g: 255, b: 255, a: 1 },
+                           LOWER_THRESHOLD: { r: 255, g: 255, b: 255, a: 1 },
+                           BELOW_THRESHOLD: { r: 255, g: 255, b: 255, a: 0 } 
+                        },
+                  BACKGROUND_FILL: [
+                  { r: 210, g: 157, b: 225, a: 1 },
+                  { r: 193, g: 157, b: 172, a: 1 },
+                  { r: 229, g: 233, b: 231, a: 1 },
+                  { r: 230, g: 230, b: 110, a: 1 },
+                  { r: 228, g: 201, b: 77, a: 1 },
+                  ]
+               },
+            1: {
+                  FILL: {
+                           UPPER_THRESHOLD: { r: 60, g: 218, b: 228, a: 0.95 },
+                           //LOWER_THRESHOLD: { r: 60, g: 218, b: 228, a: 0.95 },
+                           LOWER_THRESHOLD: { r: 214, g: 73, b: 80, a: 0.95 },
+                           BELOW_THRESHOLD: { r: 62, g: 58, b: 65, a: 0.95 },
+                        },
+                  SHADOW: {
+                             UPPER_THRESHOLD: { r: 30, g: 110, b: 110, a: 0.5 },
+                             LOWER_THRESHOLD: { r: 105, g: 35, b: 40, a: 0.5 },
+                             BELOW_THRESHOLD: { r: 30, g: 25, b: 30, a: 0.5 },
+                          },
+                  STROKE: {
+                             UPPER_THRESHOLD: { r: 255, g: 255, b: 255, a: 0 },
+                             LOWER_THRESHOLD: { r: 255, g: 255, b: 255, a: 0 },
+                             BELOW_THRESHOLD: { r: 255, g: 255, b: 255, a: 0 } 
+                          },
+                  FACE: {
+                           UPPER_THRESHOLD: { r: 255, g: 255, b: 255, a: 1 },
+                           LOWER_THRESHOLD: { r: 255, g: 255, b: 255, a: 1 },
+                           BELOW_THRESHOLD: { r: 255, g: 255, b: 255, a: 0 } 
+                        },
+                  BACKGROUND_FILL: [
+                  { r: 210, g: 157, b: 225, a: 1 },
+                  { r: 193, g: 157, b: 172, a: 1 },
+                  { r: 229, g: 233, b: 231, a: 1 },
+                  { r: 230, g: 230, b: 110, a: 1 },
+                  { r: 228, g: 201, b: 77, a: 1 },
+                  ]
+               },
+            2: {
+               }
+         }
 
 function generate(radius, amount) {
 
@@ -138,7 +138,7 @@ function Box(grid, row, col, width, datum) {
    this.shadow.rotation = Math.PI / 4;
    this.shadow.visible = false;
    this.shadow.fill = colorToString(colors[this.juiceLevel]['SHADOW'][this.threshold])
-   this.shadow.noStroke();
+      this.shadow.noStroke();
 
    this.faces = [];
    for(var i = 0; i < 4; i++) {
@@ -146,7 +146,7 @@ function Box(grid, row, col, width, datum) {
       face.scale = 0.3;
       face.noStroke();
       face.fill = colorToString(colors[this.juiceLevel]['FACE'][this.threshold])
-      face.visible = false;
+         face.visible = false;
       this.faces.push(face);
    }
 
@@ -166,19 +166,19 @@ Box.prototype.REDRAW_MOUSE_COL = function(mouse) {
    var box = this;
 
    switch(grid.attributes.juiceLevel) {
-   
+
       case 0:
       case 1:
-         
-      var vR = grid.orientation.indexOf(box.row);
 
-      box.group['translation'].x = mouse.x; 
-      box.group['translation'].y = grid.vectors[vR].y; 
+         var vR = grid.orientation.indexOf(box.row);
 
-      break;
+         box.group['translation'].x = mouse.x; 
+         box.group['translation'].y = grid.vectors[vR].y; 
+
+         break;
 
       default:
-      break;
+         break;
    }
 }
 
@@ -191,39 +191,39 @@ Box.prototype.REDRAW_MOUSE_ROW = function(mouse) {
       case 0:
       case 1:
 
-      var vC = grid.orientation.indexOf(box.col);
+         var vC = grid.orientation.indexOf(box.col);
 
-      box.group['translation'].x = grid.vectors[vC].x; 
-      box.group['translation'].y = mouse.y; 
+         box.group['translation'].x = grid.vectors[vC].x; 
+         box.group['translation'].y = mouse.y; 
 
-      break;
+         break;
 
       default:
-      break;
+         break;
    }
 }
 
 Box.prototype.REDRAW_MOUSE = function(mouse) {
 
    var box = this;
-   
+
    switch(grid.attributes.juiceLevel) {
 
       case 0:
-      box.group.translation.copy(mouse);
-      break;
+         box.group.translation.copy(mouse);
+         break;
 
       case 1:
-      var delta = mouse.clone(); 
-      delta.subSelf(box.group.translation);
+         var delta = mouse.clone(); 
+         delta.subSelf(box.group.translation);
 
-      //box.stretch(delta);
+         //box.stretch(delta);
 
-      box.group.translation.set(mouse.x, mouse.y);
-      break;
+         box.group.translation.set(mouse.x, mouse.y);
+         break;
 
       default:
-      break;
+         break;
    }
 
 }
@@ -236,49 +236,49 @@ Box.prototype.REDRAW = function() {
 
       case 0:
 
-      var vC = grid.orientation.indexOf(box.col);
-      var vR = grid.orientation.indexOf(box.row);
+         var vC = grid.orientation.indexOf(box.col);
+         var vR = grid.orientation.indexOf(box.row);
 
-      box.group['translation'].x = grid.vectors[vC].x; 
-      box.group['translation'].y = grid.vectors[vR].y; 
-      break;
+         box.group['translation'].x = grid.vectors[vC].x; 
+         box.group['translation'].y = grid.vectors[vR].y; 
+         break;
 
       case 1:
 
-      var vC = grid.orientation.indexOf(box.col);
-      var vR = grid.orientation.indexOf(box.row);
+         var vC = grid.orientation.indexOf(box.col);
+         var vR = grid.orientation.indexOf(box.row);
 
-      var end = new Two.Vector(grid.vectors[vC].x, grid.vectors[vR].y);
+         var end = new Two.Vector(grid.vectors[vC].x, grid.vectors[vR].y);
 
-      var redraw = new TWEEN
-         .Tween({ x: box.group['translation'].x, y: box.group['translation'].y })
-         .to({ x: end.x, y: end.y }, 300)
-         .easing(TWEEN.Easing.Cubic.Out)
-         .onUpdate(function() {
+         var redraw = new TWEEN
+            .Tween({ x: box.group['translation'].x, y: box.group['translation'].y })
+            .to({ x: end.x, y: end.y }, 300)
+            .easing(TWEEN.Easing.Cubic.Out)
+            .onUpdate(function() {
 
-            var delta = box.group.translation.clone();
+               var delta = box.group.translation.clone();
 
-            box.group['translation'].set(this.x, this.y);
+               box.group['translation'].set(this.x, this.y);
 
-            delta.subSelf(box.group.translation);
-            //box.stretch(delta);
-         })
+               delta.subSelf(box.group.translation);
+               //box.stretch(delta);
+            })
          .onComplete(function() {
             //box.stretch({ x: 0, y: 0 });
          })
 
-      if(box.tween['move']) {
-         box.tween['move'].stop();
-      }
+         if(box.tween['move']) {
+            box.tween['move'].stop();
+         }
 
-      box.tween['move'] = redraw;
+         box.tween['move'] = redraw;
 
-      box.tween['move'].start();
+         box.tween['move'].start();
 
-      break;
+         break;
 
       default:
-      break;
+         break;
    }
 }
 
@@ -298,14 +298,14 @@ Box.prototype.SLIDE_IN = function() {
          box.shadow.translation.y = -this.x;
          box.face.translation.y = -this.x;
       })
-      .onStart(function() {
+   .onStart(function() {
 
-         box.group.opacity = 1;
-      })
-      .onComplete(function() {
-         grid.disabled = false;
-      })
-      .start();
+      box.group.opacity = 1;
+   })
+   .onComplete(function() {
+      grid.disabled = false;
+   })
+   .start();
 }
 
 Box.prototype.SLIDE_OUT = function() {
@@ -333,11 +333,11 @@ Box.prototype.SLIDE_OUT = function() {
          box.face.translation.y = -this.x;
 
       })
-      .onStart(function() {
-         grid.disabled = true;
-         box.group.opacity = 0.3;
-      })
-      .start();
+   .onStart(function() {
+      grid.disabled = true;
+      box.group.opacity = 0.3;
+   })
+   .start();
 }
 
 Box.prototype.FADE_IN = function() {
@@ -354,9 +354,9 @@ Box.prototype.FADE_IN = function() {
          box.group['scale'] = this.s;
          //box.group['opacity'] = this.o;
       })
-      .onStart(function() {
-      })
-      .start();
+   .onStart(function() {
+   })
+   .start();
 }
 
 Box.prototype.FADE_OUT = function() {
@@ -375,9 +375,9 @@ Box.prototype.FADE_OUT = function() {
          //box.group['opacity'] = this.o;
 
       })
-      .onStart(function() {
-      })
-      .start();
+   .onStart(function() {
+   })
+   .start();
 }
 
 Box.prototype.SETTLE = function() {
@@ -390,45 +390,45 @@ Box.prototype.SETTLE = function() {
 
       case 0:
 
-      box.shape['opacity'] = box.origin['opacity'];
-      box.shape['rotation'] = box.origin['rotation'];
-      box.shape['fill'] = colorToString(colors[0]['FILL'][box.threshold]);
-      box.shape['opacity'] = 1;
+         box.shape['opacity'] = box.origin['opacity'];
+         box.shape['rotation'] = box.origin['rotation'];
+         box.shape['fill'] = colorToString(colors[0]['FILL'][box.threshold]);
+         box.shape['opacity'] = 1;
 
-      break;
+         break;
 
       case 1:
 
-      var offset = (Math.random() * 100) + 400;
-      var delay = (Math.random() * 500) + 200;
+         var offset = (Math.random() * 100) + 400;
+         var delay = (Math.random() * 500) + 200;
 
-      var rotationOffset = box.origin['rotation'] + (Math.random() * 2) - 1;
+         var rotationOffset = box.origin['rotation'] + (Math.random() * 2) - 1;
 
-      this.tween = new TWEEN.Tween(
-            { 
-               y: -offset,
-               o: 0,
-               r: rotationOffset,
-               s: 1.5,
-               sh: 0
-            })
+         this.tween = new TWEEN.Tween(
+               { 
+                  y: -offset,
+            o: 0,
+            r: rotationOffset,
+            s: 1.5,
+            sh: 0
+               })
          .to(
-            { 
-               y: 0,
-               o: box.origin['opacity'],
-               r: box.origin['rotation'],
-               s: box.origin['scale'],
-               sh: 0.9
-            }, 500)
+               { 
+                  y: 0,
+            o: box.origin['opacity'],
+            r: box.origin['rotation'],
+            s: box.origin['scale'],
+            sh: 0.9
+               }, 500)
          .delay(delay)
-         .easing(TWEEN.Easing.Bounce.Out)
-         .onUpdate(function() {
-            box.shape['translation'].y = this.y;
-            box.shape['opacity'] = this.o;
-            box.shape['rotation'] = this.r;
-            box.shape['scale'] = this.s;
-            box.shadow['scale'] = this.sh;
-         })
+            .easing(TWEEN.Easing.Bounce.Out)
+            .onUpdate(function() {
+               box.shape['translation'].y = this.y;
+               box.shape['opacity'] = this.o;
+               box.shape['rotation'] = this.r;
+               box.shape['scale'] = this.s;
+               box.shadow['scale'] = this.sh;
+            })
          .onStart(function() {
             box.shadow.visible = true;
             box.shadow.scale = 0;
@@ -441,14 +441,14 @@ Box.prototype.SETTLE = function() {
             box.shape['translation'].x = 0;
          })
          .onComplete(function() {
-            box.face.visible = true;
+            //box.face.visible = true;
          })
          .start();
 
-      break;
+         break;
 
       default:
-      break;
+         break;
 
    }
 }
@@ -461,47 +461,47 @@ Box.prototype.OUTLINE_EXTRA = function() {
 
       case 0:
 
-      if(box.disabled['highlight']) {
-         return;
-      }
-      box.shape.stroke = "black";
-      box.shape.linewidth = 4;
-      box.group.toFront();
-      break;
+         if(box.disabled['highlight']) {
+            return;
+         }
+         box.shape.stroke = "black";
+         box.shape.linewidth = 4;
+         box.group.toFront();
+         break;
 
       case 1:
 
-      if(box.disabled['highlight']) {
-         return;
-      }
+         if(box.disabled['highlight']) {
+            return;
+         }
 
-      if(box.tween['highlight'] !== undefined) {
-         box.tween['highlight'].stop();
-      }
+         if(box.tween['highlight'] !== undefined) {
+            box.tween['highlight'].stop();
+         }
 
 
-      box.tween['highlight'] = new TWEEN.Tween(
-            { 
-               t: box.shape['linewidth'],
-               tr: 0,//box.shape['translation'].x,
-               sh: 0,//box.shadow['translation'].y
-               o: box.shadow['opacity']
-            })
+         box.tween['highlight'] = new TWEEN.Tween(
+               { 
+                  t: box.shape['linewidth'],
+            tr: 0,//box.shape['translation'].x,
+            sh: 0,//box.shadow['translation'].y
+            o: box.shadow['opacity']
+               })
          .to({ t: 2.5, tr: -5, sh: 2.5, o: 0.9 }, 500)
-         .easing(TWEEN.Easing.Elastic.Out)
-         .onUpdate(function() {
-            box.shape.translation.x = this.tr;
-            box.shape.translation.y = this.tr;
+            .easing(TWEEN.Easing.Elastic.Out)
+            .onUpdate(function() {
+               box.shape.translation.x = this.tr;
+               box.shape.translation.y = this.tr;
 
-            box.shadow.translation.x = this.sh;
-            box.shadow.translation.y = this.sh;
+               box.shadow.translation.x = this.sh;
+               box.shadow.translation.y = this.sh;
 
 
-            box.face.translation.x = this.tr;
-            box.face.translation.y = this.tr;
+               box.face.translation.x = this.tr;
+               box.face.translation.y = this.tr;
 
-            box.shadow.opacity = this.o;
-         })
+               box.shadow.opacity = this.o;
+            })
          .onStart(function() {
             //box.face.visible = false;
 
@@ -509,10 +509,10 @@ Box.prototype.OUTLINE_EXTRA = function() {
 
          })
          .start();
-      break;
+         break;
 
       default:
-      break;
+         break;
    }
 }
 
@@ -522,53 +522,53 @@ Box.prototype.OUTLINE = function() {
 
    switch(grid.attributes.juiceLevel) {
 
-   case 0:
-      if(box.disabled['highlight']) {
-         return;
-      }
-      box.shape.stroke = "black";
-      box.shape.linewidth = 10;
+      case 0:
+         if(box.disabled['highlight']) {
+            return;
+         }
+         box.shape.stroke = "black";
+         box.shape.linewidth = 10;
 
-      //ensures that the highlighted box will be moved to front after all the others
-      setTimeout(function() {
-         box.group.toFront();
-      }, 20)
+         //ensures that the highlighted box will be moved to front after all the others
+         setTimeout(function() {
+            box.group.toFront();
+         }, 20)
 
-   break;
+         break;
 
-   case 1:
-   
-      if(box.disabled['highlight']) {
-         return;
-      }
+      case 1:
 
-      if(box.tween['highlight'] !== undefined) {
-         box.tween['highlight'].stop();
-      }
+         if(box.disabled['highlight']) {
+            return;
+         }
+
+         if(box.tween['highlight'] !== undefined) {
+            box.tween['highlight'].stop();
+         }
 
 
-      box.tween['highlight'] = new TWEEN.Tween(
-            { 
-               t: box.shape['linewidth'],
-               tr: 0,//box.shape['translation'].x,
-               sh: 0,//box.shadow['translation'].y
-               o: box.shadow['opacity']
-            })
+         box.tween['highlight'] = new TWEEN.Tween(
+               { 
+                  t: box.shape['linewidth'],
+            tr: 0,//box.shape['translation'].x,
+            sh: 0,//box.shadow['translation'].y
+            o: box.shadow['opacity']
+               })
          .to({ t: 5, tr: -10, sh: 5, o: 0.9 }, 500)
-         .delay(20)
-         .easing(TWEEN.Easing.Elastic.Out)
-         .onUpdate(function() {
-            box.shape.translation.x = this.tr;
-            box.shape.translation.y = this.tr;
+            .delay(20)
+            .easing(TWEEN.Easing.Elastic.Out)
+            .onUpdate(function() {
+               box.shape.translation.x = this.tr;
+               box.shape.translation.y = this.tr;
 
-            box.shadow.translation.x = this.sh;
-            box.shadow.translation.y = this.sh;
+               box.shadow.translation.x = this.sh;
+               box.shadow.translation.y = this.sh;
 
-            box.face.translation.x = this.tr;
-            box.face.translation.y = this.tr;
+               box.face.translation.x = this.tr;
+               box.face.translation.y = this.tr;
 
-            box.shadow.opacity = this.o;
-         })
+               box.shadow.opacity = this.o;
+            })
          .onStart(function() {
             //box.face.visible = false;
 
@@ -576,10 +576,10 @@ Box.prototype.OUTLINE = function() {
 
          })
          .start();
-      break;
+         break;
 
-   default:
-      break;
+      default:
+         break;
    }
 }
 
@@ -587,35 +587,35 @@ Box.prototype.UNOUTLINE_EXTRA = function() {
    var box = this;
 
    switch(grid.attributes.juiceLevel) {
-   case 0:
-      box.shape.noStroke();
-      break;
+      case 0:
+         box.shape.noStroke();
+         break;
 
-   case 1:
-      if(box.tween['highlight'] !== undefined) {
-         box.tween['highlight'].stop();
-      }
+      case 1:
+         if(box.tween['highlight'] !== undefined) {
+            box.tween['highlight'].stop();
+         }
 
-      box.tween['highlight'] = new TWEEN.Tween(
-            { 
-               tr: box.shape['translation'].x,
-               sh: box.shadow['translation'].x,
-               o: box.shadow['opacity']
-            })
+         box.tween['highlight'] = new TWEEN.Tween(
+               { 
+                  tr: box.shape['translation'].x,
+            sh: box.shadow['translation'].x,
+            o: box.shadow['opacity']
+               })
          .to({ tr: 0, sh: 0, o: 0.5 }, 400)
-         .easing(TWEEN.Easing.Cubic.Out)
-         .onUpdate(function() {
-            //box.shape.linewidth = box.origin['linewidth'] + this.t;
-            box.shape.translation.x = this.tr;
-            box.shape.translation.y = this.tr;
-            box.shadow.translation.x = this.sh;
-            box.shadow.translation.y = this.sh;
+            .easing(TWEEN.Easing.Cubic.Out)
+            .onUpdate(function() {
+               //box.shape.linewidth = box.origin['linewidth'] + this.t;
+               box.shape.translation.x = this.tr;
+               box.shape.translation.y = this.tr;
+               box.shadow.translation.x = this.sh;
+               box.shadow.translation.y = this.sh;
 
-            box.face.translation.x = this.tr;
-            box.face.translation.y = this.tr;
+               box.face.translation.x = this.tr;
+               box.face.translation.y = this.tr;
 
-            box.shadow.opacity = this.o;
-         })
+               box.shadow.opacity = this.o;
+            })
          .onComplete(function() {
 
 
@@ -629,74 +629,181 @@ Box.prototype.UNOUTLINE_EXTRA = function() {
          })
          .start();
 
-      break;
-   default:
-      break;
+         break;
+      default:
+         break;
    }
 
 }
 
 Box.prototype.SMILE_ON = function() {
+
    var box = this;
 
-   box.face.visible = false;
-   box.face = box.faces[0];
-   box.face.visible = true;
+   switch(grid.attributes.juiceLevel) {
+
+      case 1:
+
+         // box.face.visible = false;
+         var t = new TWEEN.Tween({ scale: 0.4, o: 0 })
+            .to({ scale: 1, o: 1 }, 200)
+            .delay(Math.random() * 500 + 200)
+            .onStart(function() {
+               box.face = box.faces[0];
+               box.face.visible = true;
+            })
+            .onUpdate(function() {
+               box.face.opacity = this.opacity;
+               box.face.scale = this.scale;
+            });
+
+         var t2 = new TWEEN.Tween({ scale: 1 })
+            .to({ scale: 0.5 }, 100)
+            .onUpdate(function() {
+               box.face.scale = this.scale;
+            });
+
+         t.chain(t2).start();
+
+         break;
+
+      default:
+         break;
+   }
 }
 
 Box.prototype.SMILE_OFF = function() {
    var box = this;
 
-   box.face.visible = false;
-   box.face = box.faces[randomInt(0,3)];
-   box.face.visible = true;
+   switch(grid.attributes.juiceLevel) {
+
+      case 1:
+
+         box.face.visible = false;
+         //box.face = box.faces[randomInt(0,3)];
+         //box.face.visible = true;
+
+         break;
+
+      default:
+         break;
+   }
 }
 
 Box.prototype.UNOUTLINE = function() {
    var box = this;
 
    switch(grid.attributes.juiceLevel) {
-   case 0:
-      box.shape.noStroke();
-      break;
+      case 0:
+         box.shape.noStroke();
+         break;
 
-   case 1:
+      case 1:
 
-      if(box.tween['highlight'] !== undefined) {
-         box.tween['highlight'].stop();
-      }
+         if(box.tween['highlight'] !== undefined) {
+            box.tween['highlight'].stop();
+         }
 
-      box.tween['highlight'] = new TWEEN.Tween(
-            { 
-               tr: box.shape['translation'].x,
-               sh: box.shadow['translation'].x,
-               o: box.shadow['opacity']
-            })
+         box.tween['highlight'] = new TWEEN.Tween(
+               { 
+                  tr: box.shape['translation'].x,
+            sh: box.shadow['translation'].x,
+            o: box.shadow['opacity']
+               })
          .to({ tr: 0, sh: 0, o: 0.5 }, 400)
-         .easing(TWEEN.Easing.Cubic.Out)
-         .onUpdate(function() {
-            //box.shape.linewidth = box.origin['linewidth'] + this.t;
-            box.shape.translation.x = this.tr;
-            box.shape.translation.y = this.tr;
-            box.shadow.translation.x = this.sh;
-            box.shadow.translation.y = this.sh;
+            .easing(TWEEN.Easing.Cubic.Out)
+            .onUpdate(function() {
+               //box.shape.linewidth = box.origin['linewidth'] + this.t;
+               box.shape.translation.x = this.tr;
+               box.shape.translation.y = this.tr;
+               box.shadow.translation.x = this.sh;
+               box.shadow.translation.y = this.sh;
 
-            box.face.translation.x = this.tr;
-            box.face.translation.y = this.tr;
+               box.face.translation.x = this.tr;
+               box.face.translation.y = this.tr;
 
-            box.shadow.opacity = this.o;
-         })
+               box.shadow.opacity = this.o;
+            })
          .onComplete(function() {
 
          })
          .onStart(function() {
             // box.face = box.faces[randomInt(0,3)];
-            
+
          })
          .start();
 
-   default:
-      break;
-      
+      default:
+         break;
+
+   }
+}
+
+var arrows = [];
+
+Box.prototype.DRAG_INDICATOR = function() {
+
+   var box = this;
+
+   switch(grid.attributes.juiceLevel) {
+
+      case 0:
+         break;
+
+      case 1:
+
+         _.each(arrows, function(a) {
+            a.stop();
+         });
+         arrows = [];
+
+         for(var i = 0; i < 2; i++) {
+
+
+            var rect = assets[5].clone();
+            rect.stroke = "black";
+            rect.linewidth = 4;
+            rect.noFill();
+            rect.scale = 0.2;
+            //rect.noStroke();
+            rect.rotation = Math.PI * (i%2 == 0? 3/4 : -1/4);
+
+            arrows.push(new TWEEN.Tween({ 
+                  rect: rect, 
+                  length: box.group.translation.x + (i%2 == 0 ? 1: -1) * (10),
+                  group: grid.foreground 
+               })
+               .to({ 
+                  length: box.group.translation.x + (i%2 == 0 ? 1: -1) * (100)
+               }, 500)
+               .easing(TWEEN.Easing.Cubic.Out)
+               .onUpdate(function() {
+                  this.rect.translation.x = this.length;
+                  this.rect.translation.y = this.length;
+
+               })
+               .onStart(function() {
+
+                  grid.foreground.add(this.rect);
+                  //this.group.add(this.rect);
+                  //this.group.add(this.rect2);
+               })
+               .onStop(function() {
+                  grid.foreground.remove(this.rect);
+               })
+               .onComplete(function() {
+                  grid.foreground.remove(this.rect);
+                  //this.group.remove(this.rect);
+                  //this.group.remove(this.rect2);
+               })
+               .start());
+            }
+
+
+         break;
+
+      default:
+         break;
+
    }
 }

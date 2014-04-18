@@ -29,6 +29,8 @@ function Grid(numRows, width, data, juiceLevel) {
    this.background.translation.set(two.width/2, two.width/2);
    this.foreground.translation.set(two.width/2, two.width/2);
 
+   //this.foreground.rotation = Math.PI * (1/4);
+
 
    //this.foreground.add(this.great);
 
@@ -41,7 +43,10 @@ function Grid(numRows, width, data, juiceLevel) {
          b.SETTLE();
       });
 
-      SWEEP(grid.foreground, grid.background); 
+      if(grid.attributes.juiceLevel > 0) {
+         SWEEP(grid.foreground, grid.background); 
+      }
+
    }, 500);
 
    $(window)
@@ -243,6 +248,7 @@ Grid.prototype.getDistanceToIndex = function(index, vector) {
 Grid.prototype.select = function(row) {
 
    if(row == null) {
+      GRAB_INDICATOR();
       return;
    }
 
@@ -257,6 +263,9 @@ Grid.prototype.select = function(row) {
 
    this.selected.index = this.orientation.indexOf(this.selected.row);
 
+
+   //DRAG_INDICATOR(this.foreground, this.background, this.selected.index);
+
 }
 
 Grid.prototype.newCalcScore = function() {
@@ -265,6 +274,7 @@ Grid.prototype.newCalcScore = function() {
 
    this.boxes.scored = [];
    this.boxes.unscored = [];
+   this.clusters = [];
    
    var ret = _.flatten(_.map(
       _.range(numRows, 1, -1),
@@ -278,6 +288,7 @@ Grid.prototype.newCalcScore = function() {
    _.each(ret, function(cluster) {
 
       if(_.intersection(cluster.cluster, this.boxes.scored).length == 0) {
+         this.clusters.push(cluster.cluster);
          this.boxes.scored = this.boxes.scored.concat(cluster.cluster);
       }
 
@@ -366,6 +377,7 @@ Grid.prototype.highlight = function(row) {
 
    _.each(this.boxes.highlighted, function(b) {
       b.OUTLINE();
+      b.DRAG_INDICATOR();
    }, this);
 
    _.each(this.boxes.highlighted_extra, function(b) {
@@ -393,6 +405,10 @@ Grid.prototype.deselect = function() {
 
    this.newCalcScore();
 
+   _.each(this.boxes.all, function(b) {
+      b.SMILE_OFF();
+   }, this);
+
    _.each(this.boxes.selected_all, function(b) { 
       b.REDRAW();
    }, this)
@@ -400,28 +416,42 @@ Grid.prototype.deselect = function() {
 
    if(this.boxes.scored.length > 0) {
 
-      SWEEP(grid.foreground, grid.background); 
-      randomChoice(background_animations)(grid.foreground, grid.background); 
+      if(grid.attributes.juiceLevel > 0) {
 
-      _.each(this.boxes.unscored, function(b) {
-         b.SLIDE_OUT();
-         //b.animate(SHINE[this.attributes.juiceLevel]);
+         randomChoice(background_animations)(grid.foreground, grid.background);
 
-      }, this);
+         _.each(this.boxes.unscored, function(b) {
+            b.SLIDE_OUT();
+         }, this);
 
-      _.each(this.boxes.scored, function(b) {
-         //b.animate(SHINE[this.attributes.juiceLevel]);
-         //b.animate(SHINE[this.attributes.juiceLevel]);
-         b.SMILE_ON();
+         _.each(this.boxes.scored, function(b) {
+            b.UNOUTLINE();
+            b.SMILE_ON();
 
-      }, this);
+         }, this);
 
-      setTimeout(function() { 
-         _.each(grid.boxes.unscored, function(b) {
-            b.SLIDE_IN();
+         SHAKE(grid.group, this.clusters[0].length);
+
+         var timeout = setTimeout(function() {
+            console.log('triggering');
+            $(document).trigger('mousedown');
+         }, 5000);
+
+         $(document).one('mousedown', function(event) { 
+            event.stopPropagation();
+            window.clearTimeout(timeout);
+            stopAllTweens();
+            SWEEP(grid.foreground, grid.background); 
+
+            RESET(grid.group);
+            _.each(grid.boxes.unscored, function(b) {
+               b.SLIDE_IN();
+            });
+
          });
 
-      }, 500);
+
+      }
    }
 
    //SQUARES[this.attributes.juiceLevel](grid.background);

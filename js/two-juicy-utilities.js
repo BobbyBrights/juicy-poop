@@ -86,3 +86,18 @@ $('#slide_in').on('click', function() {
       SLIDE_IN[grid.attributes.juiceLevel](b);
    })
 })
+
+function repeatUntilClick(fn, timeout) {
+
+   var clicked = false;
+
+   $(document).one('click', function() {
+
+      clicked = true;
+   })
+
+   while(!clicked) {
+
+   }
+
+}

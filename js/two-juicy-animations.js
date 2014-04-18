@@ -1,5 +1,51 @@
 var background_animations = [];
 
+var tweens = [];
+
+function stopAllTweens() {
+
+   _.each(tweens, function(tween) {
+      tween.stop();
+   })
+}
+
+var SHAKE = function(group, intensity) {
+
+   if(!intensity) {
+      intensity = 0;
+   }
+
+   var t = new TWEEN.Tween({ translation_x: group.translation.x })
+      .to({ translation_x: group.translation.x + (3*(intensity-9)) }, intensity*2) 
+      .delay(50)
+      .repeat(3)
+      .yoyo(true)
+      .onUpdate(function() {
+         group.translation.y = this.translation_x;
+      })
+      .start();
+}
+      
+
+var RESET = function(group) {
+
+   var t = new TWEEN.Tween({ scale: 1, group: group })
+      .to({ scale: 0.5 }, 300)
+      .easing(TWEEN.Easing.Cubic.Out)
+      .onUpdate(function() {
+         this.group.scale = this.scale;
+      })
+
+   var t2 = new TWEEN.Tween({ scale: 0.5, group: group })
+      .to({ scale: 1}, 150)
+      .easing(TWEEN.Easing.Cubic.Out)
+      .onUpdate(function() {
+         this.group.scale = this.scale;
+      })
+
+   t.chain(t2).start();
+}
+
 var SQUARES = function(foreground, background) {
 
    for(var i = 0; i < 10; i++) {
@@ -12,9 +58,11 @@ var SQUARES = function(foreground, background) {
       //rect.rotation= ;
       background.add(rect);
 
-      var settle = new TWEEN.Tween({ scale: 1, rect: rect })
+      tweens.push(new TWEEN.Tween({ scale: 1, rect: rect, i: i })
          .to({ scale: 0.5 }, 300)
          .delay(50 * i)
+         .repeat(Infinity)
+         .yoyo(true)
          .easing(TWEEN.Easing.Cubic.Out)
          .onStart(function() {
             this.rect.visible = true;
@@ -25,7 +73,7 @@ var SQUARES = function(foreground, background) {
          .onComplete(function() {
             background.remove(this.rect);
          })
-         .start();
+         .start());
    }
 }
 background_animations.push(SQUARES);
@@ -53,6 +101,8 @@ var INTENSE = function(foreground, background) {
       var enter = new TWEEN.Tween({ line: line, r: Math.PI*2*(i/lines) })
          .to({ r: Math.PI*2*(i/lines)+((i%2==0?-1:1)*Math.PI*2*(1/lines)) }, 300)
          .delay(delay)
+         .repeat(Infinity)
+         .yoyo(true)
          .easing(TWEEN.Easing.Cubic.Out)
          .onStart(function() {
 
@@ -116,6 +166,8 @@ var BUBBLES = function(foreground, background) {
       BUBBLES.tween = new TWEEN.Tween({ circle: circle, y: y, x: x })
          .to({ y: dest_y, x: dest_x }, 500)
          .delay(delay)
+         .repeat(Infinity)
+         .yoyo(true)
          .easing(TWEEN.Easing.Cubic.Out)
          .onStart(function() {
 
@@ -159,6 +211,7 @@ var BARS = function(foreground, background) {
       BARS.tween = new TWEEN.Tween({ x: start, rect: rect, i: i })
          .to({ x: dest}, 500)
          .delay(5 * i)
+         .repeat(Infinity)
          .easing(TWEEN.Easing.Cubic.Out)
          .onStart(function() {
             this.rect.visible = true;
@@ -328,6 +381,57 @@ var OUR_BUDDY = function(foreground, backgroudn, html) {
 
       })
    }, 1000)
+
+}
+
+var GRAB_INDICATOR = function() {
+   var background = grid.background;
+   var foreground = grid.foreground;
+
+   background.rotation = 0;
+
+   var line = two.makeLine(-two.width, 0, two.width, 0);
+   line.rotation = Math.PI * 1/4;
+   line.translation.set(two.width/2, -two.width/2);
+   line.stroke = "black";
+
+   var line2 = two.makeLine(-two.width, 0, two.width, 0);
+   line2.rotation = Math.PI * 1/4;
+   line2.translation.set(two.width/2, -two.width/2);
+   line2.stroke = "black";
+
+
+   var t = new TWEEN.Tween({
+         x: two.width/2,
+         y: -two.width/2,
+         line: line,
+         x2: -two.width/2,
+         y2: two.width/2,
+         line2: line2, 
+         width: 100,
+         o: 0
+
+      })
+      .easing(TWEEN.Easing.Cubic.Out)
+      .to({ x: 0, y: 0, x2: 0, y2: 0, width: 1, o: 0.2 }, 1000)
+      .onStart(function() {
+         background.add(line);
+         background.add(line2);
+      })
+      .onUpdate(function() {
+         this.line.opacity = this.o;
+         this.line.linewidth = this.width;
+         this.line.translation.set(this.x, this.y);
+
+         this.line2.opacity = this.o;
+         this.line2.linewidth = this.width;
+         this.line2.translation.set(this.x2, this.y2);
+      })
+      .onComplete(function() {
+         background.remove(line);
+         background.remove(line2);
+      })
+      .start();
 
 }
 
