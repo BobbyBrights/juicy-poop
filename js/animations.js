@@ -238,73 +238,81 @@ background_animations.push(BARS);
 
 var SWEEP = function(foreground, background) {
 
-   if(SWEEP.tween !== undefined) {
-      return;
+   switch(juice) {
+
+      case 1:
+
+         if(SWEEP.tween !== undefined) {
+            return;
+         }
+         //get a random color
+
+         var c = colors[1]['BACKGROUND_FILL'][randomInt(0,5)]
+
+         var rect = new Two.Polygon(generate(two.width, 4), true);
+         rect.fill = colorToString(c)
+         rect.noStroke();
+         rect.visible = false;
+
+         background.add(rect);
+
+         var dir = randomInt(0,4); //0 left, 1 top, 2 right, 3 bottom
+         var x, y;
+
+         if(dir == 0) {
+            x = -2 * two.width;
+            y = 0;
+
+         } else if (dir == 1) {
+            y = -2 * two.width;
+            x = 0;
+
+         } else if (dir == 2) {
+            x = 2 * two.width;
+            y = 0;
+
+         } else {
+            y = 2 * two.width;
+            x = 0;
+
+         }
+
+         SWEEP.tween = new TWEEN.Tween({ 
+               rect: rect, 
+               x: x, 
+               y: y
+            })
+            .to({ y: 0, x: 0 }, 500) 
+            .delay(50)
+            .easing(TWEEN.Easing.Cubic.Out)
+            .onStart(function() {
+
+               this.rect.visible = true;
+               this.rect.translation.set(0, -2 *two.width);
+               
+            })
+            .onUpdate(function() {
+
+               this.rect.translation.set(this.x, this.y);
+
+            })
+            .onComplete(function() {
+               _.each(background.children, function(v, i) {
+
+                  if(v.id != this.rect.id) {
+                     background.remove(v)
+                  }
+
+               }, this)
+
+               SWEEP.tween = undefined;
+
+            })
+            .start();
+      break;
+      default:
+      break;
    }
-   //get a random color
-
-   var c = colors[1]['BACKGROUND_FILL'][randomInt(0,5)]
-
-   var rect = new Two.Polygon(generate(two.width, 4), true);
-   rect.fill = colorToString(c)
-   rect.noStroke();
-   rect.visible = false;
-
-   background.add(rect);
-
-   var dir = randomInt(0,4); //0 left, 1 top, 2 right, 3 bottom
-   var x, y;
-
-   if(dir == 0) {
-      x = -2 * two.width;
-      y = 0;
-
-   } else if (dir == 1) {
-      y = -2 * two.width;
-      x = 0;
-
-   } else if (dir == 2) {
-      x = 2 * two.width;
-      y = 0;
-
-   } else {
-      y = 2 * two.width;
-      x = 0;
-
-   }
-
-   SWEEP.tween = new TWEEN.Tween({ 
-         rect: rect, 
-         x: x, 
-         y: y
-      })
-      .to({ y: 0, x: 0 }, 500) 
-      .delay(50)
-      .easing(TWEEN.Easing.Cubic.Out)
-      .onStart(function() {
-
-         this.rect.visible = true;
-         this.rect.translation.set(0, -2 *two.width);
-         
-      })
-      .onUpdate(function() {
-
-         this.rect.translation.set(this.x, this.y);
-
-      })
-      .onComplete(function() {
-         _.each(background.children, function(v, i) {
-
-            if(v.id != this.rect.id) {
-               background.remove(v)
-            }
-
-         }, this)
-
-         SWEEP.tween = undefined;
-
-      })
-      .start();
 }
 
 var OUR_BUDDY = function(foreground, backgroudn, html) {

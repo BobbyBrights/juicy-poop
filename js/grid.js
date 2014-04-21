@@ -1,15 +1,8 @@
-function Grid(numRows, width, data, juiceLevel) {
+function Grid(group, background, foreground, data, size) {
 
-   this.attributes = { numRows: numRows, width: width, juiceLevel: juiceLevel, data: data };
+   this.attributes = { numRows: size, data: data, boxSpace : 80 };
    this.selected = { row: -1, active: false };
-   this.highlighted = { row: -1, active: false, box: null };
-   this.orientation = [];
-
-   for(var i = 0; i < data.length; i++) {
-      this.orientation.push(i);
-   }
-
-   this.vectors = [];
+   this.highlighted = { row: -1, active: false };
 
    this.boxes = {
       all: [],
@@ -19,59 +12,68 @@ function Grid(numRows, width, data, juiceLevel) {
       scored: []
    };
 
-   this.disabled = false;
 
-   this.background = two.makeGroup();
-   this.group = two.makeGroup();
-   this.foreground = two.makeGroup();
+   this.background = background; //two.makeGroup();
+   this.group = group; //two.makeGroup();
+   this.foreground = foreground; 
 
-   this.group.translation.set(two.width/2, two.width/2);
-   this.background.translation.set(two.width/2, two.width/2);
-   this.foreground.translation.set(two.width/2, two.width/2);
-
-   //this.foreground.rotation = Math.PI * (1/4);
-
-
-   //this.foreground.add(this.great);
-
-   this.setVectors();
+   this.setOrientation(this.attributes.data.length);
+   this.setVectors(this.attributes.numRows);
    this.setBoxes();
 
-   //load time... timeout required for grid to actually be initialized
-   setTimeout(function() { 
-      _.each(grid.boxes.all, function(b) {
-         b.SETTLE();
-      });
 
-      if(grid.attributes.juiceLevel > 0) {
-         SWEEP(grid.foreground, grid.background); 
-      }
+   this.disabled = true;
+   
+   var grid = this;
 
+   setTimeout(function() {
+      grid.disabled = false;
+      grid.prev = new Button(grid.foreground, -200, 250, 100, 50, 'prev', grid.prevTutorial);
+      grid.next = new Button(grid.foreground, 200, 250, 100, 50, 'next', grid.nextTutorial);
    }, 500);
 
-   $(window)
-   .on('mousemove', function(e) {
-      e.preventDefault();
-      mouse.x = e.clientX - svg.left;
-      mouse.y = e.clientY - svg.top;
-
-      grid.handleMousemove(mouse);
-
-   })
-   .on('mousedown', function(e) {
-      e.preventDefault();
-
-      mouse.x = e.clientX - svg.left;
-      mouse.y = e.clientY - svg.top;
-
-      grid.handleMousedown(mouse);
-   })
-   .on('mouseup', function(e) {
-      e.preventDefault();
-      grid.handleMouseup(mouse);
+   //load time... timeout required for grid to actually be initialized
+   _.each(this.boxes.all, function(b) {
+      b.SETTLE();
    });
 
-   $('.splash').css('display', 'none');
+   SWEEP(this.foreground, this.background); 
+
+   $(document)
+   .on('mousemove', { grid: this }, function(e) {
+      e.preventDefault();
+      mouse.x = e.clientX - svg.left;
+      mouse.y = e.clientY - svg.top;
+
+      e.data.grid.handleMousemove(mouse);
+
+   })
+   .on('mousedown', { grid: this}, function(e) {
+      console.log('mousedowning');
+      e.preventDefault();
+
+      mouse.x = e.clientX - svg.left;
+      mouse.y = e.clientY - svg.top;
+
+      e.data.grid.handleMousedown(mouse);
+   })
+   .on('mouseup', { grid: this }, function(e) {
+      e.preventDefault();
+
+      mouse.x = e.clientX - svg.left;
+      mouse.y = e.clientY - svg.top;
+
+      e.data.grid.handleMouseup(mouse);
+   });
+
+
+}
+
+Grid.prototype.prevTutorial = function() {
+
+}
+
+Grid.prototype.nextTutorial = function() {
 
 }
 
@@ -82,25 +84,86 @@ Grid.prototype.setBoxes = function() {
 
       for(row = 0; row < this.attributes.numRows; row++) {
 
-         var width = (this.attributes.width / this.attributes.numRows) * 0.5;
-
-         var datum = this.attributes.data[row][col];
-
-         var box = new Box(this, row, col, width, datum);
-
+         var box = new Box(this, row, col);
          this.boxes.all.push(box);
       }
    }
 }
 
-Grid.prototype.setVectors = function() {
+Grid.prototype.updateBoxes = function() {
 
-   var max = (this.attributes.numRows-1) 
-      * (this.attributes.width / this.attributes.numRows) / 2;
+   this.boxes.adding = [];
 
-   for(var i = 0; i < this.attributes.numRows; i++) {
+   if(this.attributes.numRows < this.vectors.length) { //adding boxes
 
-      var distance = i * (this.attributes.width / this.attributes.numRows);
+      for(var l = this.vectors.length - this.attributes.numRows; l >= 0; l--) {
+
+         var row = this.attributes.numRows;
+
+         var mid = new Box(this, row, row);
+         this.boxes.adding.push(mid);
+
+         for(var r = 0; r < row; r++) {
+
+            var box = new Box(this, r, row);
+            this.boxes.adding.push(box);
+         }
+
+         for(var c = 0; c < row; c++) {
+            var box = new Box(this, row, c);
+            this.boxes.adding.push(box);
+         }
+
+      }
+
+
+   } else { //subbing boxes
+   }
+
+}
+
+Grid.prototype.addRow = function() {
+
+   if(this.attributes.numRows == this.attributes.data.length) {
+      return;
+   }
+
+   this.setVectors(this.attributes.numRows + 1);
+   this.updateBoxes();
+
+   this.attributes.numRows = this.vectors.length;
+
+   _.each(this.boxes.all, function(box) {
+      box.REDRAW();
+   })
+
+   _.each(this.boxes.adding, function(box) {
+
+      box.shape.visible = true;
+      box.shadow.visible = true;
+      box.ADD();
+   })
+
+   this.boxes.all = this.boxes.all.concat(this.boxes.adding);
+}
+
+Grid.prototype.setOrientation = function(numOrientation) {
+   this.orientation = [];
+
+   for(var i = 0; i < numOrientation; i++) {
+      this.orientation.push(i);
+   }
+}
+
+Grid.prototype.setVectors = function(numVectors) {
+
+   this.vectors = [];
+
+   var max = (numVectors-1) * (this.attributes.boxSpace) / 2;
+
+   for(var i = 0; i < numVectors; i++) {
+
+      var distance = i * this.attributes.boxSpace;
 
       var v = new Two.Vector(distance, distance);
 
@@ -238,7 +301,7 @@ Grid.prototype.getNearestRow = function(mouse) {
 
 Grid.prototype.getDistanceToIndex = function(index, vector) {
 
-   if(index < 0 || index > this.orientation.length-1) {
+   if(index < 0 || index > this.vectors.length-1) {
       return Number.MAX_VALUE;
    }
 
@@ -307,7 +370,6 @@ Grid.prototype.calcScore = function() {
    for(var clusterStart = 0, bestCluster; clusterStart < this.attributes.numRows; clusterStart++) {
 
       for(var clusterSize = 1; clusterSize < this.attributes.numRows-clusterStart; clusterSize++) {
-         console.log(clusterStart, clusterSize);
 
          var cluster = this.getBoxesFromCluster(clusterStart, clusterSize);
 
@@ -336,7 +398,8 @@ Grid.prototype.calcScore = function() {
 Grid.prototype.isMouseInGrid = function(mouse) {
 
    //because mouse is in grid coords already
-   var halfheight = halfwidth = this.attributes.width/2;
+   var halfheight = halfwidth = two.width/2;
+
    return (mouse.x > -halfwidth && mouse.x < halfwidth && 
            mouse.y > -halfheight && mouse.y < halfheight);
 }
@@ -403,6 +466,7 @@ Grid.prototype.deselect = function() {
       return;
    }
 
+
    this.newCalcScore();
 
    _.each(this.boxes.all, function(b) {
@@ -414,9 +478,10 @@ Grid.prototype.deselect = function() {
    }, this)
 
 
+
    if(this.boxes.scored.length > 0) {
 
-      if(grid.attributes.juiceLevel > 0) {
+      if(juice > 0) {
 
          randomChoice(background_animations)(grid.foreground, grid.background);
 
@@ -437,8 +502,9 @@ Grid.prototype.deselect = function() {
             $(document).trigger('mousedown');
          }, 5000);
 
-         $(document).one('mousedown', function(event) { 
+         $(this.group._renderer.elem).one('mousedown', function(event) { 
             event.stopPropagation();
+
             window.clearTimeout(timeout);
             stopAllTweens();
             SWEEP(grid.foreground, grid.background); 
@@ -448,16 +514,16 @@ Grid.prototype.deselect = function() {
                b.SLIDE_IN();
             });
 
+            grid.highlight(null);
+            setTimeout(function() {
+               grid.highlight(grid.getNearestRow(mouse));
+            }, 1000);
+
          });
 
 
       }
    }
-
-   //SQUARES[this.attributes.juiceLevel](grid.background);
-   //SWEEP[0](grid.background);
-   //GREAT[0](grid.foreground, grid.background);
-   //playCheer();
 
    this.selected.active = false;
 }

@@ -3,50 +3,8 @@
 <head>
    <title>P O O P</title>
 
-   <style>
-      * {
-         margin: 0px;
-         padding: 0px;
-      }
+   <link rel="stylesheet" href="css/main.css" type="text/css" />
 
-      button {
-         display: none;
-      }
-
-      #game-container {
-         height: 700px;
-         width: 600px;
-         position: relative; 
-      }
-
-      #game-container.hover {
-         cursor: pointer;
-      }
-
-      #speech-bubble {
-         position: absolute; 
-         background-color: white; 
-         height: auto; 
-         width: 200px; 
-         visibility: hidden;
-         box-sizing: border-box;
-         padding: 20px;
-      }
-
-      #speech-bubble:after {
-         position: absolute;
-         bottom: 0px;
-         right: -30px;
-         content: " ";
-
-         width: 0px;
-         height: 0px;
-         border-style: solid;
-         border-width: 30px 0 0 30px;
-         border-color: transparent transparent transparent #fff;
-      }
-      
-   </style>
    <script src="js/lib/csv.js"></script>
    <script src="js/lib/jquery-2.1.0.min.js"></script>
    <script src="js/lib/Tween.js"></script>
@@ -146,36 +104,35 @@
 <polygon points="23.165,119 100.5,107.75 177.835,119 100.5,80.726 "/>
 </svg>
 
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+    width="200px" height="200px" viewBox="0 0 200 200" enable-background="new 0 0 200 200" xml:space="preserve">
+<path fill="#FFFFFF" stroke="#000000" stroke-miterlimit="10" d="M164.5,100.5v-65h-65v-10h-75v75h10v65h65v10h75v-75H164.5z
+    M33.5,92.5V42.25V34.5H43h48.5v8h-50v50H33.5z M165.5,158v8.5H157h-49.5v-8h50v-50h8V158z"/>
+</svg>
 
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+    width="200px" height="200px" viewBox="0 0 200 200" enable-background="new 0 0 200 200" xml:space="preserve">
+<path fill="#FFFFFF" stroke="#000000" stroke-miterlimit="10" d="M164.5,100.5v-65h-65v-10h-75v75h10v65h65v10h75v-75H164.5z
+    M41.5,92.5h-8V42.25V34.5H43h48.5v8h-50V92.5z M59,109h-8V58.75V51h9.5H109v8H59V109z M91,150v-8h50V92h8v50.25V150h-9.5H91z
+    M165.5,158v8.5H157h-49.5v-8h50v-50h8V158z"/>
+</svg>
 
 
    </div>
    <div id="game-container">
-      <p class="splash" style="position: absolute;">click to begin</p>
       <div id="speech-bubble"></div> 
    </div>
 
-   <button id="squares">squares</button>
-   <button id="sweep">sweep</button>
-   <button id="slide">slide</button>
-   <button id="splat">splat</button>
-   <button id="ripple">ripple</button>
-   <button id="jump">jump</button>
-   <button id="fade_out">fade out</button>
-   <button id="fade_in">fade in</button>
-   <button id="slide_out">slide out</button>
-   <button id="slide_in">slide in</button>
-   <button id="bars">bars</button>
-   <button id="buddy">buddy</button>
-   <button id="bubbles">bubbles</button>
-
    <script src="js/lib/two.js"></script>
-   <script src="js/two-juicy-sounds.js"></script>
-   <script src="js/two-juicy-grid.js"></script>
-   <script src="js/two-juicy-splash.js"></script>
-   <script src="js/two-juicy-box.js"></script>
-   <script src="js/two-juicy-animations.js"></script>
-   <script src="js/two-juicy-utilities.js"></script>
+   <script src="js/sounds.js"></script>
+   <script src="js/grid.js"></script>
+   <script src="js/splash.js"></script>
+   <script src="js/box.js"></script>
+   <script src="js/animations.js"></script>
+   <script src="js/utilities.js"></script>
+   <script src="js/button.js"></script>
+   <script src="js/game.js"></script>
+   <script src="js/tutorial.js"></script>
    <script src="js/two-juicy.js"></script>
 
 </body>
