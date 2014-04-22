@@ -45,6 +45,17 @@
    border-color: transparent transparent transparent #fff;
 }
 
+.hint {
+   position: absolute;
+   text-align: center;
+   pointer-events: none;
+   top: 0;
+   left: 0;
+   width: 600px;
+   height: 200px;
+   margin: 0 auto;
+}
+
 .text {
    position: absolute;
    pointer-events: none;
@@ -62,4 +73,54 @@
    font-size: 30px;
    text-transform: uppercase;
    letter-spacing: 2px;
+}
+
+.btn {
+   position: absolute;
+
+   letter-spacing: 2px;
+   text-align: center;
+   font-family: 'Source Sans Pro';
+   font-size: 20pt;
+   border: none;
+   border-radius: 3px;
+   box-shadow: 0 5px 0px #12694F;
+   padding: 5px 10px;
+   margin: 10px 10px 14px 10px;
+   cursor: pointer;
+   text-transform: uppercase;
+   background-color: #23c897;
+   /*background-color: #D55332;*/
+   /*background-color: #2daee1;*/
+   color: white;
+   -webkit-touch-callout: none;
+   -webkit-user-select: none;
+   -khtml-user-select: none;
+   -moz-user-select: none;
+   -ms-user-select: none;
+   user-select: none;
+}
+
+.btn.small {
+   font-size: 10pt;
+   background-color: #2daee1;
+   box-shadow: 0 5px 0px #175B75;
+}
+
+.btn.disabled {
+   color: #aaa;
+   box-shadow: 0 5px 0px #666;
+   background-color: #bbb;
+   cursor: inherit;
+}
+
+.btn:active {
+   top: 3px;
+   box-shadow: 0 2px 0px #12694F;
+
+}
+
+.btn.disabled:active {
+   top: 1px;
+   box-shadow: 0 4px 0px #666;
 }

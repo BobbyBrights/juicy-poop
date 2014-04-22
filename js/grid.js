@@ -25,11 +25,8 @@ function Grid(group, background, foreground, data, size) {
    this.disabled = true;
    
    var grid = this;
-
    setTimeout(function() {
       grid.disabled = false;
-      grid.prev = new Button(grid.foreground, -200, 250, 100, 50, 'prev', grid.prevTutorial);
-      grid.next = new Button(grid.foreground, 200, 250, 100, 50, 'next', grid.nextTutorial);
    }, 500);
 
    //load time... timeout required for grid to actually be initialized
@@ -69,16 +66,7 @@ function Grid(group, background, foreground, data, size) {
 
 }
 
-Grid.prototype.prevTutorial = function() {
-
-}
-
-Grid.prototype.nextTutorial = function() {
-
-}
-
 Grid.prototype.setBoxes = function() {
-
 
    for(col = 0; col < this.attributes.numRows; col++) {
 
@@ -96,7 +84,7 @@ Grid.prototype.updateBoxes = function() {
 
    if(this.attributes.numRows < this.vectors.length) { //adding boxes
 
-      for(var l = this.vectors.length - this.attributes.numRows; l >= 0; l--) {
+      for(var l = this.vectors.length - this.attributes.numRows; l > 0; l--) {
 
          var row = this.attributes.numRows;
 
@@ -113,9 +101,7 @@ Grid.prototype.updateBoxes = function() {
             var box = new Box(this, row, c);
             this.boxes.adding.push(box);
          }
-
       }
-
 
    } else { //subbing boxes
    }
@@ -133,15 +119,12 @@ Grid.prototype.addRow = function() {
 
    this.attributes.numRows = this.vectors.length;
 
-   _.each(this.boxes.all, function(box) {
-      box.REDRAW();
+   _.each(this.boxes.adding, function(box) {
+      box.ADD();
    })
 
-   _.each(this.boxes.adding, function(box) {
-
-      box.shape.visible = true;
-      box.shadow.visible = true;
-      box.ADD();
+   _.each(this.boxes.all, function(box) {
+      box.REDRAW();
    })
 
    this.boxes.all = this.boxes.all.concat(this.boxes.adding);
@@ -460,24 +443,9 @@ Grid.prototype.disableMouse = function() {
 
 }
 
-Grid.prototype.deselect = function() {
-
-   if(!this.selected.active) {
-      return;
-   }
-
+Grid.prototype.effectAfterScore = function() {
 
    this.newCalcScore();
-
-   _.each(this.boxes.all, function(b) {
-      b.SMILE_OFF();
-   }, this);
-
-   _.each(this.boxes.selected_all, function(b) { 
-      b.REDRAW();
-   }, this)
-
-
 
    if(this.boxes.scored.length > 0) {
 
@@ -524,6 +492,22 @@ Grid.prototype.deselect = function() {
 
       }
    }
+}
+
+
+Grid.prototype.deselect = function() {
+
+   if(!this.selected.active) {
+      return;
+   }
+
+   _.each(this.boxes.all, function(b) {
+      b.SMILE_OFF();
+   }, this);
+
+   _.each(this.boxes.selected_all, function(b) { 
+      b.REDRAW();
+   }, this)
 
    this.selected.active = false;
 }

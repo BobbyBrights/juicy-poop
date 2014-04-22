@@ -46,7 +46,11 @@ var RESET = function(group) {
    t.chain(t2).start();
 }
 
-var SQUARES = function(foreground, background) {
+var SQUARES = function(foreground, background, repeat) {
+
+   if(repeat == undefined) {
+      repeat = Infinity;
+   }
 
    for(var i = 0; i < 10; i++) {
 
@@ -61,7 +65,7 @@ var SQUARES = function(foreground, background) {
       tweens.push(new TWEEN.Tween({ scale: 1, rect: rect, i: i })
          .to({ scale: 0.5 }, 300)
          .delay(50 * i)
-         .repeat(Infinity)
+         .repeat(repeat)
          .yoyo(true)
          .easing(TWEEN.Easing.Cubic.Out)
          .onStart(function() {
@@ -315,7 +319,251 @@ var SWEEP = function(foreground, background) {
    }
 }
 
-var OUR_BUDDY = function(foreground, backgroudn, html) {
+var ENTER_PYRO = function(group) {
+
+   var subgroup = two.makeGroup();
+   group.add(subgroup);
+
+   var circle1 = two.makeCircle(-150, -50, 100);
+   circle1.stroke = 'black';
+   circle1.linewidth = 5;
+
+   var circle2 = two.makeCircle(50, 40, 10);
+   circle2.stroke = 'black';
+   circle2.linewidth = 5;
+
+   var line1 = two.makeLine(-150,50, 50, 50);
+   line1.stroke = 'black';
+   line1.linewidth = 5;
+
+   var line2 = two.makeLine(-92, -132, 60, 37);
+   line2.stroke = 'black';
+   line2.linewidth = 5;
+
+   var mag = [];
+
+   mag.push(two.makeLine(-220, -80, -100, -80));
+   mag.push(two.makeLine(-220, -60, -100, -60));
+   mag.push(two.makeLine(-220, -40, -100, -40));
+
+   subgroup.add(line1);
+   subgroup.add(line2);
+   subgroup.add(circle2);
+   subgroup.add(circle1);
+
+   _.each(mag, function(m, i) {
+      m.linewidth = 10;
+      m.cap = 'round';
+      m.stroke = 'orangered';
+      subgroup.add(m);
+
+      m.visible = false;
+
+      var t = new TWEEN.Tween({ m: m, x: -100 })
+      .to({ x: 0 }, 2000)
+      .delay(120 * i)
+      .easing(TWEEN.Easing.Cubic.InOut)
+      .repeat(Infinity)
+      .onStart(function() {
+         this.m.visible = true;
+         this.m.vertices[1].origin = this.m.vertices[1].clone();
+         console.log(this.m.vertices);
+      })
+      .onUpdate(function() {
+
+         this.m.vertices[1].x = this.m.vertices[1].origin.x + this.x;
+      })
+      .start();
+   })
+
+
+   return subgroup;
+
+}
+
+var ENTER_BUDDY = function(group) {
+
+   var buddy = assets[4];
+   group.add(buddy);
+   buddy.visible = false;
+   buddy.translation.y = 0;
+
+   var entry = new TWEEN.Tween({ buddy: buddy, x: 400 })
+      .to({ x: 0 }, 200)
+      .easing(TWEEN.Easing.Cubic.Out)
+      .onStart(function() {
+         this.buddy.visible = true;
+      })
+      .onUpdate(function() {
+         this.buddy.translation.y = this.x;
+
+      });
+
+   var hover = new TWEEN.Tween({ buddy: buddy, x: 0 })
+      .to({ x: 10 }, 700)
+      .delay(100 * Math.random() + 100)
+      .yoyo(true)
+      .repeat(Infinity)
+      .easing(TWEEN.Easing.Cubic.InOut)
+      .onUpdate(function() {
+         this.buddy.translation.y = this.x;
+      })
+      .onComplete(function() {
+         this.buddy.visible = false;
+      })
+
+   entry.chain(hover).start();
+
+   return buddy;
+}
+
+function DNA(foreground) {
+
+   this.group = assets[9];
+   this.group.visible = false;
+   this.group.stroke = 'black';
+   this.group.linewidth = 2;
+
+   this.group.scale = 2;
+
+   this.sep = [];
+
+   var index = 0;
+   _.each(this.group.children, function(seg, i) {
+      if(index == 0) {
+         this.dna1 = seg;
+      } else if (index == 2) {
+         this.dna2 = seg;
+      } else {
+
+         this.sep.push(seg);
+      }
+      index++;
+   }, this)
+
+
+   foreground.add(this.group);
+
+}
+
+DNA.prototype.DETWEEN = function() {
+
+   _.each(this.tween, function(t) {
+      t.stop();
+   })
+}
+
+DNA.prototype.ENTER = function() {
+
+   this.group.visible = true;
+
+   this.group.noFill();
+   this.group.linewidth = 20;
+   this.dna1.stroke = 'blue';
+   this.dna2.stroke = 'red';
+
+   this.tween = [];
+
+   switch(juice) {
+
+      case 1:
+
+         this.tween.push(new TWEEN.Tween({ dna: this, r: 0, y: 0 })
+            .to({ r: Math.PI / 24 * Math.random(), y: -10 }, 2000)
+            .easing(TWEEN.Easing.Cubic.InOut)
+            .delay(Math.random() * 100 + 200)
+            .repeat(Infinity)
+            .yoyo(true)
+            .onUpdate(function() {
+               this.dna.group.translation.y = this.y;
+               this.dna.group.rotation = this.r;
+            })
+            .start());
+
+         this.tween.push(new TWEEN.Tween({ dna: this, x1: this.dna1.translation.x, x2: this.dna2.translation.x })
+            .to({ x1: this.dna1.translation.x - 10, x2: this.dna1.translation.x + 10 }, 1400)
+            .easing(TWEEN.Easing.Bounce.Out)
+            .delay(Math.random() * 200 + 4000)
+            .repeat(Infinity)
+            .yoyo(true)
+            .onUpdate(function() {
+
+               this.dna.dna1.translation.x = this.x1;
+               this.dna.dna2.translation.x = this.x2;
+            })
+            .start());
+
+         break;
+      default:
+         break;
+   }
+}
+
+DNA.prototype.SPLIT = function() {
+
+   console.log(this.dna1.vertices);
+
+
+   this.dnacopy1 = this.dna1.clone();
+   this.dnacopy2 = this.dna2.clone();
+
+   switch(juice) {
+      case 1:
+      
+         this.dnacopy1.noFill();
+         this.dnacopy1.stroke = 'blue';
+         this.dnacopy1.linewidth = 20;
+
+         this.dnacopy2.noFill();
+         this.dnacopy2.stroke = 'red';
+         this.dnacopy2.linewidth = 20;
+
+         this.tween.push(new TWEEN.Tween({ 
+               dna: this, 
+               r: this.group.rotation,
+               x1: this.dna1.translation.x,
+               xc1: this.dnacopy1.translation.x,
+               x2: this.dna2.translation.x,
+               xc2: this.dnacopy2.translation.x,
+               o: 1
+            })
+            .to({
+               r: 0,
+               x1: this.dna1.translation.x - 40,
+               xc1: this.dnacopy1.translation.x + 40,
+               x2: this.dna2.translation.x - 40,
+               xc2: this.dnacopy2.translation.x + 40,
+               o: 0
+            }, 1000)
+            .easing(TWEEN.Easing.Cubic.InOut)
+            .onUpdate(function() {
+
+               _.each(this.dna.sep, function(sep) {
+                  sep.opacity = this.o;
+               }, this)
+
+               this.dna.group.rotation = this.r;
+               this.dna.dna1.translation.x = this.x1;
+               this.dna.dnacopy1.translation.x = this.xc1;
+               this.dna.dna2.translation.x = this.x2;
+               this.dna.dnacopy2.translation.x = this.xc2;
+            })
+            .start());
+      
+         break;
+      default:
+         break;
+   }
+
+}
+
+DNA.prototype.DESTROY = function() {
+
+   foreground.remove(this.group);
+
+}
+
+var OUR_BUDDY = function(foreground, background, html) {
 
    var buddy = assets[4];
    foreground.add(buddy);

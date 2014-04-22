@@ -81,7 +81,7 @@ function Box(grid, row, col) {
    this.shadow.visible = false;
    this.shadow.fill = colorToString(colors[juice]['SHADOW'][this.threshold])
    this.shadow.noStroke();
-   this.shadow.opacity = 0.6;
+   this.shadow.opacity = 0.8;
 
    this.face = assets[0].clone();
    this.face.scale = 0.3;
@@ -103,6 +103,9 @@ Box.prototype.ADD = function() {
    var vC = this.grid.orientation.indexOf(this.col);
    var vR = this.grid.orientation.indexOf(this.row);
 
+   this.shape.visible = true;
+   this.shadow.visible = true;
+
    switch(juice) {
 
       case 0:
@@ -111,14 +114,18 @@ Box.prototype.ADD = function() {
 
          this.tween['add'] = new TWEEN.Tween({
                box: this,
-               x: two.width,
-               y: two.width
+               o: 0,
+               x: this.grid.vectors[vC].x + 100,
+               y: this.grid.vectors[vR].y + 100
             })
             .to({
-               x: this.grid.vectors[vC],
-               y: this.grid.vectors[vR]
-            }, 200)
+               o: 1,
+               x: this.grid.vectors[vC].x,
+               y: this.grid.vectors[vR].y
+            }, 400)
+            .easing(TWEEN.Easing.Cubic.Out)
             .onUpdate(function() {
+               this.box.group.opacity = this.o;
                this.box.group.translation.set(this.x,this.y);
             })
             .start();
@@ -262,6 +269,32 @@ Box.prototype.SLIDE_IN = function() {
       .start();
 }
 
+Box.prototype.HIGHLIGHT_REGION = function() {
+
+   var vC = this.grid.orientation.indexOf(this.col);
+   var vR = this.grid.orientation.indexOf(this.row);
+
+   switch(juice) {
+
+      case 1:
+         if(vC > vR) {
+            this.shape.stroke = 'blue';
+            this.shape.linewidth = 5;
+         } else if(vR > vC) {
+            this.shape.stroke = 'red';
+            this.shape.linewidth = 5;
+         }
+
+         break;
+      default:
+         break;
+   }
+}
+
+Box.prototype.UNHIGHLIGHT = function() {
+   this.shape.noStroke();
+}
+
 Box.prototype.SLIDE_OUT = function() {
 
 
@@ -327,33 +360,6 @@ Box.prototype.FADE_OUT = function() {
       .start();
 }
 
-Box.prototype.ADD = function() {
-   switch(juice) {
-      case 0:
-         break;
-      case 1:
-
-         this.tween['add'] = new TWEEN.Tween({
-               box: this,
-               x: this.group.translation.x + two.width/2,
-               y: this.group.translation.y + two.width/2,
-            })
-            .to({
-               x: this.group.translation.x,
-               y: this.group.translation.y
-            }, 200)
-            .easing(TWEEN.Easing.Cubic.InOut)
-            .onUpdate(function() {
-               this.box.group.translation.set(this.x,this.y);
-            })
-            .start();
-         break;
-      default:
-         break;
-   }
-
-}
-
 Box.prototype.SETTLE = function() {
 
    switch(juice) {
@@ -385,7 +391,7 @@ Box.prototype.SETTLE = function() {
             sh: this.shadow.scale,
          }, 500)
          .delay(delay)
-         .easing(TWEEN.Easing.Bounce.Out)
+         .easing(TWEEN.Easing.Back.Out)
          .onUpdate(function() {
             this.box.shape['translation'].y = this.y;
             this.box.shape['opacity'] = this.o;
@@ -395,7 +401,8 @@ Box.prototype.SETTLE = function() {
          })
          .onStart(function() {
             this.box.shape.visible = true;
-            this.box.shadow.visible = true;
+            //this.box.shadow.visible = true;
+            this.box.shadow.visible = false;
             this.box.shadow.scale = 0;
 
             this.box.shape['translation'].x = 0;
@@ -403,6 +410,7 @@ Box.prototype.SETTLE = function() {
             this.box.grid.disableMouse();
          })
          .onComplete(function() {
+            this.box.shadow.visible = true;
             this.box.grid.enableMouse();
          })
          .start();
