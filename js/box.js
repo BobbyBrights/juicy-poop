@@ -41,24 +41,11 @@ function Box(grid, row, col) {
       this.shape.scale = 0.4;
       this.shadow.scale = 0.4;
 
-      this.arrow = [];
-      this.arrow[0] = assets[5].clone();
-      this.arrow[1] = assets[5].clone();
-      this.arrow[0].stroke = "black";
-      this.arrow[1].stroke = "black";
-      this.arrow[0].linewidth = 4;
-      this.arrow[1].linewidth = 4;
-      this.arrow[0].noFill();
-      this.arrow[1].noFill();
-      this.arrow[0].scale = 0.2;
-      this.arrow[1].scale = 0.2;
-      this.arrow[0].rotation = Math.PI * 3/4;
-      this.arrow[1].rotation = Math.PI * -1/4;
-
-      this.arrow[0].visible = false;
-      this.arrow[1].visible = false;
-
-      this.group.add(this.arrow[0]).add(this.arrow[1])
+      this.chev = assets[10].clone();
+      this.chev.visible = false;
+      this.chev.noStroke();
+      this.chev.fill = 'red';
+      this.chev.scale = 0.4;
 
    } else {
       this.shape = new Two.Group();
@@ -90,6 +77,10 @@ function Box(grid, row, col) {
    this.face.visible = false;
 
    this.group.add(this.shadow).add(this.shape).add(this.face);
+
+   if(row == col) {
+      this.group.add(this.chev);
+   }
 
    this.group.translation.set(this.grid.vectors[this.col].x, this.grid.vectors[this.row].y); 
    this.group.rotation = 0;
@@ -277,14 +268,21 @@ Box.prototype.HIGHLIGHT_REGION = function() {
    switch(juice) {
 
       case 1:
-         if(vC > vR) {
-            this.shape.stroke = 'blue';
-            this.shape.linewidth = 5;
-         } else if(vR > vC) {
-            this.shape.stroke = 'red';
-            this.shape.linewidth = 5;
-         }
 
+         if(vC != vR) {
+
+            this.tween['region'] = new TWEEN.Tween({ box: this, linewidth: 0, color: vC > vR ? 'blue' : 'red' })
+               .to({ linewidth: 6 }, 200)
+               .easing(TWEEN.Easing.Cubic.Out)
+               .delay(500 * Math.random())
+               .onUpdate(function() {
+                  this.box.shape.linewidth = this.linewidth;
+               })
+               .onStart(function() {
+                  this.box.shape.stroke = this.color;
+               })
+               .start();
+            }
          break;
       default:
          break;
@@ -395,14 +393,14 @@ Box.prototype.SETTLE = function() {
          .onUpdate(function() {
             this.box.shape['translation'].y = this.y;
             this.box.shape['opacity'] = this.o;
-            this.box.shape['rotation'] = this.r;
-            this.box.shape['scale'] = this.s;
+            //this.box.shape['rotation'] = this.r;
+            //this.box.shape['scale'] = this.s;
             this.box.shadow['scale'] = this.sh;
          })
          .onStart(function() {
             this.box.shape.visible = true;
-            //this.box.shadow.visible = true;
-            this.box.shadow.visible = false;
+            this.box.shadow.visible = true;
+            //this.box.shadow.visible = false;
             this.box.shadow.scale = 0;
 
             this.box.shape['translation'].x = 0;
@@ -487,6 +485,22 @@ Box.prototype.OUTLINE_EXTRA = function() {
    }
 }
 
+Box.prototype.DIAG_OUTLINE = function() {
+
+   var t = new TWEEN.Tween({ box: this, x: this.group.translation.x - 5, or: this.group.translation.x })
+      .to({ x: this.group.translation.x + 5 }, 20)
+      .yoyo(true)
+      .repeat(4)
+      .delay(Math.random() * 20)
+      .onUpdate(function() {
+         this.box.group.translation.set(this.x, this.x);
+      })
+      .onComplete(function() {
+         this.box.group.translation.set(this.or, this.or);
+      })
+      .start();
+
+}
 
 Box.prototype.OUTLINE = function() {
 
@@ -517,6 +531,39 @@ Box.prototype.OUTLINE = function() {
             this.tween['highlight'].stop();
          }
 
+         if(this.tween['chev']) {
+            this.tween['chev'].stop();
+         }
+
+         this.tween['chev'] = new TWEEN.Tween({
+               box: this,
+               scale: this.chev.scale,
+               origin: this.chev.scale,
+               opacity: 0.2,
+            })
+            .to({ 
+               scale: this.chev.scale * 1.4,
+               opacity: 1
+            }, 500)
+            .delay(300)
+            .repeat(Infinity)
+            .yoyo(true)
+            .easing(TWEEN.Easing.Cubic.Out)
+            .onUpdate(function() {
+               this.box.chev.scale = this.scale;
+               this.box.chev.opacity = this.opacity;
+            })
+            .onStart(function() {
+               this.box.chev.visible = true;
+               this.box.chev.translation.set(0, 0);
+            })
+            .onStop(function() {
+               this.box.chev.scale = this.origin;
+               this.box.chev.visible = false;
+            })
+            .start();
+
+
 
          this.tween['highlight'] = new TWEEN.Tween({ 
                box: this,
@@ -536,6 +583,9 @@ Box.prototype.OUTLINE = function() {
             .onUpdate(function() {
                this.box.shape.translation.x = this.tr;
                this.box.shape.translation.y = this.tr;
+
+               this.box.chev.translation.x = this.tr;
+               this.box.chev.translation.y = this.tr;
 
                this.box.shadow.translation.x = this.sh;
                this.box.shadow.translation.y = this.sh;
@@ -676,6 +726,10 @@ Box.prototype.UNOUTLINE = function() {
             this.tween['highlight'].stop();
          }
 
+         if(this.tween['chev']) {
+            this.tween['chev'].stop();
+         }
+
          this.tween['highlight'] = new TWEEN.Tween({ 
                box: this,
                tr: this.shape['translation'].x,
@@ -699,56 +753,10 @@ Box.prototype.UNOUTLINE = function() {
 
                this.box.shadow.opacity = this.o;
             })
+            .onComplete(function() {
+               this.box.chev.visible = false;
+            })
          .start();
-
-      default:
-         break;
-
-   }
-}
-
-Box.prototype.DRAG_INDICATOR = function() {
-
-   switch(juice) {
-
-      case 0:
-         break;
-
-      case 1:
-
-         _.each(arrows, function(a) {
-            a.stop();
-         });
-         arrows = [];
-
-         for(var i = 0; i < 2; i++) {
-
-            arrows.push(new TWEEN.Tween({ 
-                  box: this,
-                  i: i,
-                  length: -10 + (i%2 == 0 ? 1: -1) * (10)
-               })
-               .to({ 
-                  length: -10 + (i%2 == 0 ? 1: -1) * (50)
-               }, 500)
-               .easing(TWEEN.Easing.Cubic.Out)
-               .onUpdate(function() {
-                  this.box.arrow[this.i].translation.set(this.length, this.length);
-               })
-               .onStart(function() {
-                  this.box.arrow[this.i].visible = true;
-               })
-               .onStop(function() {
-                  this.box.arrow[this.i].visible = false;
-               })
-               .onComplete(function() {
-                  this.box.arrow[this.i].visible = false;
-               })
-               .start());
-            }
-
-
-         break;
 
       default:
          break;

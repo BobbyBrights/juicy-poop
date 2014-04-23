@@ -1,11 +1,12 @@
 function Grid(group, background, foreground, data, size) {
 
-   this.attributes = { numRows: size, data: data, boxSpace : 80 };
+   this.attributes = { numRows: size, data: data, boxSpace : 75 };
    this.selected = { row: -1, active: false };
    this.highlighted = { row: -1, active: false };
 
    this.boxes = {
       all: [],
+      diagonal: [],
       highlighted: [],
       highlighted_extra: [],
       selected: [],
@@ -74,6 +75,9 @@ Grid.prototype.setBoxes = function() {
 
          var box = new Box(this, row, col);
          this.boxes.all.push(box);
+         if(row == col) {
+            this.boxes.diagonal.push(box);
+         }
       }
    }
 }
@@ -90,6 +94,7 @@ Grid.prototype.updateBoxes = function() {
 
          var mid = new Box(this, row, row);
          this.boxes.adding.push(mid);
+         this.boxes.diagonal.push(mid);
 
          for(var r = 0; r < row; r++) {
 
@@ -343,6 +348,10 @@ Grid.prototype.newCalcScore = function() {
    //console.log(this.boxes.scored);
    this.boxes.unscored = _.difference(this.boxes.all, this.boxes.scored);
 
+   this.currentBest = (_.max(this.clusters, function(cluster) {
+      return cluster.length;
+   })).length;
+
 }
 
 Grid.prototype.calcScore = function() {
@@ -423,7 +432,7 @@ Grid.prototype.highlight = function(row) {
 
    _.each(this.boxes.highlighted, function(b) {
       b.OUTLINE();
-      b.DRAG_INDICATOR();
+      //b.DRAG_INDICATOR();
    }, this);
 
    _.each(this.boxes.highlighted_extra, function(b) {

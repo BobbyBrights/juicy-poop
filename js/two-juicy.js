@@ -39,5 +39,10 @@ two.bind('update', function(frameCount) {
 var svg = $('svg:last').offset();
 
 $(document).ready(function() {
-   loadSplash();
+   splash = new Splash(middleground, background, foreground);
+
+   $('#game-container *').addClass('juice-'+juice);
+   $('#game-container .next').on('mousedown', function() {
+      splash.nextTutorial();
+   })
 })

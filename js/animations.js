@@ -351,6 +351,8 @@ var ENTER_PYRO = function(group) {
    subgroup.add(circle2);
    subgroup.add(circle1);
 
+   subgroup.translation.set(0,30);
+
    _.each(mag, function(m, i) {
       m.linewidth = 10;
       m.cap = 'round';
@@ -381,14 +383,17 @@ var ENTER_PYRO = function(group) {
 
 }
 
-var ENTER_BUDDY = function(group) {
+var BUDDY = function(group) {
 
-   var buddy = assets[4];
-   group.add(buddy);
-   buddy.visible = false;
-   buddy.translation.y = 0;
+   this.buddy = assets[4];
+   group.add(this.buddy);
+   this.buddy.visible = false;
+   this.buddy.translation.y = 0;
+}
 
-   var entry = new TWEEN.Tween({ buddy: buddy, x: 400 })
+BUDDY.prototype.ENTER = function() {
+
+   this.tween = new TWEEN.Tween({ buddy: this.buddy, x: 400 })
       .to({ x: 0 }, 200)
       .easing(TWEEN.Easing.Cubic.Out)
       .onStart(function() {
@@ -399,7 +404,7 @@ var ENTER_BUDDY = function(group) {
 
       });
 
-   var hover = new TWEEN.Tween({ buddy: buddy, x: 0 })
+   var hover = new TWEEN.Tween({ buddy: this.buddy, x: 0 })
       .to({ x: 10 }, 700)
       .delay(100 * Math.random() + 100)
       .yoyo(true)
@@ -412,9 +417,22 @@ var ENTER_BUDDY = function(group) {
          this.buddy.visible = false;
       })
 
-   entry.chain(hover).start();
+   this.tween.chain(hover).start();
+}
 
-   return buddy;
+BUDDY.prototype.MOVE = function() {
+
+   if(this.tween) {
+      this.tween.stop();
+   }
+
+   this.tween = new TWEEN.Tween({ buddy: this.buddy, x: this.buddy.translation.x, y: this.buddy.translation.y })
+      .to({ x: -350, y: 300 }, 1000)
+      .easing(TWEEN.Easing.Cubic.Out)
+      .onUpdate(function() {
+         this.buddy.translation.set(this.x, this.y);
+      })
+      .start();
 }
 
 function DNA(foreground) {
@@ -641,6 +659,31 @@ var OUR_BUDDY = function(foreground, background, html) {
 }
 
 var GRAB_INDICATOR = function() {
+
+   switch(juice) {
+
+      case 0:
+
+      _.each(grid.boxes.diagonal, function(box) {
+         box.shape.stroke = 'black';
+         box.shape.linewidth = 3;
+
+         setTimeout(function(box) { box.shape.noStroke(); }, 500, box);
+      })
+
+      break;
+
+      case 1:
+      _.each(grid.boxes.diagonal, function(box) {
+         box.DIAG_OUTLINE();
+      })
+
+      break;
+
+      default:
+      break;
+   }
+   /*
    var background = grid.background;
    var foreground = grid.foreground;
 
@@ -689,6 +732,7 @@ var GRAB_INDICATOR = function() {
       })
       .start();
 
+      */
 }
 
 /*
