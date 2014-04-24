@@ -56,7 +56,7 @@ $(document).ready(function() {
 
 
    if(juice == 0 && ab == 1) {
-      $('a.tutorial-form-link').attr('href', 'http://www.google.com');
+      $('a.tutorial-form-link').attr('href', 'https://docs.google.com/forms/d/1Tr-ylX5xNNuxB1NZN-bHRXLpoPF-x9ZCtHvZwhBhnS8/viewform?usp=send_form');
       $('a.final-form-link').attr('href', 'https://docs.google.com/forms/d/1bGVEfkIEcujAn4XLoF_wa9ectCzxvmICf3ewQDms44o/viewform?usp=send_form');
       
    } else if(juice == 1 && ab == 1) {
