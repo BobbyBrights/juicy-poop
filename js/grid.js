@@ -22,6 +22,8 @@ function Grid(group, background, foreground, data, size) {
    this.setVectors(this.attributes.numRows);
    this.setBoxes();
 
+   this.addLabels();
+
 
    this.effects = false;
 
@@ -49,7 +51,6 @@ function Grid(group, background, foreground, data, size) {
 
    })
    .on('mousedown', { grid: this}, function(e) {
-      console.log('mousedowning');
       e.preventDefault();
 
       mouse.x = e.clientX - svg.left;
@@ -135,6 +136,10 @@ Grid.prototype.addRow = function() {
    })
 
    this.boxes.all = this.boxes.all.concat(this.boxes.adding);
+
+
+   this.labels.REMOVE();
+   this.addLabels();
 }
 
 Grid.prototype.setOrientation = function(numOrientation) {
@@ -517,6 +522,26 @@ Grid.prototype.effectAfterScore = function() {
    }
 }
 
+Grid.prototype.execEffects = function() {
+
+   this.newCalcScore();
+
+   if(this.smiles) {
+      _.each(this.boxes.all, function(b) {
+         b.SMILE_OFF();
+      }, this);
+
+      _.each(this.boxes.scored, function(b) {
+         b.SMILE_ON();
+      }, this);
+   }
+
+   if(this.effects) {
+      this.effectAfterScore();
+   }
+
+}
+
 
 Grid.prototype.deselect = function() {
 
@@ -524,19 +549,13 @@ Grid.prototype.deselect = function() {
       return;
    }
 
-   _.each(this.boxes.all, function(b) {
-      b.SMILE_OFF();
-   }, this);
-
    _.each(this.boxes.selected_all, function(b) { 
       b.REDRAW();
    }, this)
 
    this.selected.active = false;
 
-   if(this.effects) {
-      this.effectAfterScore();
-   }
+   this.execEffects();
 }
 
 Grid.prototype.swapOrientation = function(indexToSwap) {
@@ -553,6 +572,8 @@ Grid.prototype.swapOrientation = function(indexToSwap) {
    _.each(toSwap, function(b) {
       b.REDRAW();
    }, this)
+
+   this.labels.REDRAW();
 
    this.selected.index = this.orientation.indexOf(this.selected.row);
 }
@@ -628,4 +649,18 @@ Grid.prototype.handleMousemove = function(mouse) {
    } else if (mouseToNext < mouseToSel) {
       this.swapOrientation(this.selected.index+1);
    }
+}
+
+Grid.prototype.redraw = function() {
+
+   _.each(this.boxes.all, function(b) {
+      b.REDRAW();
+   });
+
+   this.labels.REDRAW();
+}
+
+Grid.prototype.addLabels = function() {
+   this.labels = new LABELS(this);
+   this.labels.REDRAW();
 }

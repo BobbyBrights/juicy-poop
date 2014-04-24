@@ -53,4 +53,20 @@ $(document).ready(function() {
       e.preventDefault();
       splash.nextTutorial();
    })
+
+
+   if(juice == 0 && ab == 1) {
+      $('a.tutorial-form-link').attr('href', 'http://www.google.com');
+      $('a.final-form-link').attr('href', 'https://docs.google.com/forms/d/1bGVEfkIEcujAn4XLoF_wa9ectCzxvmICf3ewQDms44o/viewform?usp=send_form');
+      
+   } else if(juice == 1 && ab == 1) {
+      $('a.final-form-link').attr('href', 'ab yes juice yes');
+      
+   } else if(juice == 1 && ab == 0) {
+
+      $('a.final-form-link').attr('href', 'ab no juice yes');
+
+   } else {
+      $('a.final-form-link').attr('href', 'ab no juice no');
+   }
 })

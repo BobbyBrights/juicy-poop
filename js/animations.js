@@ -847,409 +847,68 @@ var GRAB_INDICATOR = function() {
       default:
       break;
    }
-   /*
-   var background = grid.background;
-   var foreground = grid.foreground;
-
-   background.rotation = 0;
-
-   var line = two.makeLine(-two.width, 0, two.width, 0);
-   line.rotation = Math.PI * 1/4;
-   line.translation.set(two.width/2, -two.width/2);
-   line.stroke = "black";
-
-   var line2 = two.makeLine(-two.width, 0, two.width, 0);
-   line2.rotation = Math.PI * 1/4;
-   line2.translation.set(two.width/2, -two.width/2);
-   line2.stroke = "black";
-
-
-   var t = new TWEEN.Tween({
-         x: two.width/2,
-         y: -two.width/2,
-         line: line,
-         x2: -two.width/2,
-         y2: two.width/2,
-         line2: line2, 
-         width: 100,
-         o: 0
-
-      })
-      .easing(TWEEN.Easing.Cubic.Out)
-      .to({ x: 0, y: 0, x2: 0, y2: 0, width: 1, o: 0.2 }, 1000)
-      .onStart(function() {
-         background.add(line);
-         background.add(line2);
-      })
-      .onUpdate(function() {
-         this.line.opacity = this.o;
-         this.line.linewidth = this.width;
-         this.line.translation.set(this.x, this.y);
-
-         this.line2.opacity = this.o;
-         this.line2.linewidth = this.width;
-         this.line2.translation.set(this.x2, this.y2);
-      })
-      .onComplete(function() {
-         background.remove(line);
-         background.remove(line2);
-      })
-      .start();
-
-      */
 }
 
-/*
-var JUMP = {
+var LABELS = function(grid) {
 
-   0: function(foreground, background) {
+   this.grid = grid;
+   this.colshapes = [];
+   this.rowshapes = [];
 
-         var great = assets[2].clone();
-         great.fill = "blue";
-         great.noStroke();
-         foreground.add(great);
+   for(var i = 0; i < grid.vectors.length; i++) {
 
-         window.setTimeout(function() {
-            foreground.remove(great);
-         }, 1000)
+      if(i == 0) {
+         var rowshape = two.makeCircle(0,0,1);
+         var colshape = two.makeCircle(0,0,1);
 
+         colshape.fill = "black";
+         rowshape.fill = "black";
+      } else {
+         var points = generate(10, i+1);
+         var rowshape = new Two.Polygon(points, true);
+         var colshape = new Two.Polygon(points, true);
 
-         _.each(great.children, function(p) {
-
-            var delay = Math.random() * 200;
-
-            p.visible = false;
-
-            var jump = new TWEEN.Tween({ poly: p, y: two.height, scale: 0 })
-               .to({ y: p.translation.y-100, scale: 2 }, 400)
-               .delay(delay)
-               .easing(TWEEN.Easing.Back.Out)
-               .onUpdate(function() {
-                  p.translation.y = this.y;
-                  p.scale = this.scale;
-
-               })
-               .onStart(function() {
-                  p.visible = true;
-                  p.translation.x -= 100;
-
-               })
-               .onComplete(function() {
-
-               })
-               .start();
-
-         })
-
+         rowshape.noFill();
+         colshape.noFill();
       }
 
-}
+      rowshape.stroke = 'black';
+      rowshape.linewidth = 4;
 
-var RIPPLE = {
+      colshape.stroke = 'black';
+      colshape.linewidth = 4;
 
-   0: function(foreground, background) {
+      //console.log(grid, colshape, rowshape);
+      grid.foreground.add(colshape);
+      grid.foreground.add(rowshape);
 
+      this.colshapes.push(colshape);
+      this.rowshapes.push(rowshape);
 
-         var great = assets[2].clone();
-         great.fill = "blue";
-         great.noStroke();
-         great.scale = 2;
-         great.visible = true;
-         foreground.add(great);
-
-         var timeout = 1000;
-
-         window.setTimeout(function() {
-            foreground.remove(great);
-         }, timeout)
-
-         _.each(great.children, function(p) {
-
-            _.each(p.vertices, function(v) {
-
-               var ripple = new TWEEN.Tween( {
-                  v: v,
-                  r: 0
-               })
-               .to({ r: 4 * Math.PI }, timeout)
-               .delay(v.x * 2)
-               .onUpdate(function() {
-                  this.v.y = this.v.y + (4 * Math.sin(2 * this.r));
-               })
-               .start();
-            })
-         })
-
-      }
-
-}
-
-var SPLAT = {
-
-   0: function(foreground, background) {
-
-         var y = 0;
-
-         for(var i = 5; i > 0; i--) {
-
-            var great_shadow = assets[2].clone();
-            great_shadow.fill = (i == 1 ? "blue" : "black");
-            great_shadow.noStroke();
-            great_shadow.visible = false;
-            foreground.add(great_shadow);
-
-            var extrude = new TWEEN.Tween({
-               i: i,
-               shadow: great_shadow,
-               y: 0,
-               scale: 1,
-               opacity: 0  
-            })
-            .to({ y: 50, scale: 2, opacity: 1 }, 1000)
-            .easing(TWEEN.Easing.Cubic.Out)
-            .delay(i * 100)
-            .onUpdate(function() {
-
-               this.shadow.opacity = (this.opacity);
-               this.shadow.translation.y = -this.y;
-               this.shadow.scale = this.scale;
-
-            })
-            .onStart(function() {
-               this.shadow.visible = true;
-
-            })
-            .onComplete(function() {
-               foreground.remove(this.shadow);
-            })
-            .start();
-
-         }
-      }
-}
-
-var SLIDE = {
-
-   0: function(foreground, background) {
-
-         var rect_bot = two.makeRectangle(0,-140, - two.width * 0.7, 80);
-         rect_bot.fill = "blue";
-         rect_bot.noStroke();
-         rect_bot.visible = true;
-
-         var rect_mid = two.makeRectangle(0,0, two.width * 0.8, 200);
-         rect_mid.fill = "blue";
-         rect_mid.noStroke();
-         rect_mid.visible = true;
-
-         var rect_top = two.makeRectangle(0,150, two.width * 0.6, 100);
-         rect_top.fill = "blue";
-         rect_top.noStroke();
-         rect_top.visible = true;
-         
-         var great = assets[2].clone();
-         great.noStroke();
-         great.fill = "orangered";
-         great.scale = 2;
-         great.visible = false;
-
-         foreground.add(rect_bot);
-         foreground.add(rect_mid);
-         foreground.add(rect_top);
-         foreground.add(great);
-
-         console.log(foreground.children);
-
-         var first = new TWEEN.Tween({ 
-             top_x: two.width, 
-             mid_x: -two.width, 
-             bot_x: two.width
-         })
-         .to({
-            top_x: 0,
-            mid_x: 0,
-            bot_x: 0 
-         })
-         .easing(TWEEN.Easing.Cubic.InOut)
-         .onUpdate(function() {
-            rect_top.translation.x = this.top_x;
-            rect_mid.translation.x = this.mid_x;
-            rect_bot.translation.x = this.bot_x;
-
-            if(rect_mid.translation.x > -100) {
-               great.visible = true;
-            }
-         })
-
-         var second = new TWEEN.Tween({
-             top_x: 0,
-             mid_x: 0,
-             bot_x: 0
-         })
-         .to({
-            top_x: -two.width,
-            mid_x: two.width,
-            bot_x: -two.width
-         })
-         .easing(TWEEN.Easing.Cubic.InOut)
-         .onUpdate(function() {
-            rect_top.translation.x = this.top_x;
-            rect_mid.translation.x = this.mid_x;
-            rect_bot.translation.x = this.bot_x;
-
-            if(rect_mid.translation.x > 100) {
-               great.visible = false;
-            }
-         })
-         .onComplete(function() {
-
-            foreground.remove(rect_top);
-            foreground.remove(rect_bot);
-            foreground.remove(rect_mid);
-            foreground.remove(great);
-
-         })
-
-         first.chain(second);
-            
-         first.start();
-
-
-      }
-
-
-}
-
-
-
-var POP_2 = function(box) {
-
-   var big = new TWEEN.Tween({ s: box.shape['scale'] })
-      .to({ s: 1.42 }, 100)
-      .delay(300)
-      .easing(TWEEN.Easing.Cubic.In)
-      .onUpdate(function() {
-         box.shape['scale'] = this.s;
-      })
-
-   var small = new TWEEN.Tween({ s: 1.42 })
-      .to({ s: box.origin['scale']}, 100)
-      .easing(TWEEN.Easing.Cubic.Out)
-      .onUpdate(function() {
-         box.shape['scale'] = this.s;
-      })
-
-   big.chain(small);
-
-   if(box.tween['big'] !== undefined) {
-      box.tween['big'].stop();
    }
 
-   box.tween['big'] = big; 
-   box.tween['big'].start();
 }
 
-var SHINE = {
+LABELS.prototype.REMOVE = function() {
 
-   0: function(box) {
-
-         var blink = new TWEEN.Tween(box.origin)
-            .to({ linewidth: 10 }, 15)
-            .repeat(1)
-            .delay(200)
-            .yoyo(true)
-            .easing(TWEEN.Easing.Cubic.InOut)
-            .onUpdate(function() {
-               box.shape['linewidth'] = this.linewidth;
-            })
-            .start();
-
-      },
-
-   2: function(box) {
-      },
-
-   1: function(box) {
-
-      box.disabled['highlight'] = true;
-
-      var big = new TWEEN.Tween({ s: box.shape['scale'], r: box.shape['rotation'] })
-         .to({ s: 1.42, r: box.origin['rotation'] + Math.PI*2 }, 100)
-         .delay(300)
-         .easing(TWEEN.Easing.Cubic.In)
-         .onUpdate(function() {
-            box.shape['scale'] = this.s;
-            box.shape['rotation'] = this.r;
-         })
-         .onStart(function() {
-            box.origin['linewidth'] = 0;
-            box.shape['linewidth'] = 0;
-            box.shape['fill'] = colorToString(box.origin['color']);
-         })
-
-      var color_in = new TWEEN.Tween(
-            { 
-               r: box.origin['color'].r, 
-               g: box.origin['color'].g, 
-               b: box.origin['color'].b, 
-            })
-            .to({ r: 255, b: 255, g: 255 }, 100)
-            .delay(30 * grid.orientation.indexOf(box.row) + 30* grid.orientation.indexOf(box.col))
-            .easing(TWEEN.Easing.Cubic.InOut)
-            .onUpdate(function() {
-               color = { 
-                  r: Math.round(this.r), 
-                  g: Math.round(this.g), 
-                  b: Math.round(this.b), 
-                  a: 0.9 
-               };
-
-               box.shape.fill = colorToString(color);
-            })
-
-      var color_out = new TWEEN.Tween({ r: 255, b: 255, g: 255 })
-            .to(
-            { 
-               r: box.origin['color'].r, 
-               g: box.origin['color'].g, 
-               b: box.origin['color'].b, 
-            }, 100)
-            .onUpdate(function() {
-
-               color = { 
-                  r: Math.round(this.r), 
-                  g: Math.round(this.g), 
-                  b: Math.round(this.b), 
-                  a: 0.9 
-               };
-
-               box.shape.fill = colorToString(color);
-            })
-
-      var small = new TWEEN.Tween({ s: 1.42, r: box.shape['rotation'] })
-         .to({ s: box.origin['scale'], r: box.origin['rotation']}, 200)
-         .delay(500)
-         .easing(TWEEN.Easing.Cubic.Out)
-         .onUpdate(function() {
-            box.shape['scale'] = this.s;
-            box.shape['rotation'] = this.r;
-         })
-         .onComplete(function() {
-            box.origin['linewidth'] = 1;
-            box.shape['linewidth'] = 1;
-            box.disabled['highlight'] = false;
-         });
-
-      big.chain(color_in)
-      color_in.chain(color_out)
-      color_out.chain(small)
-
-      if(box.tween['big'] !== undefined) {
-         box.tween['big'].stop();
-      }
-
-      box.tween['big'] = big; 
-      box.tween['big'].start();
-   }
+   this.grid.foreground.remove(this.colshapes);
+   this.grid.foreground.remove(this.rowshapes);
 }
-*/
+
+LABELS.prototype.REDRAW = function() {
+
+
+   _.each(this.colshapes, function(c, i) {
+
+      var vC = this.grid.orientation.indexOf(i);
+      c.translation.set(this.grid.vectors[vC].x, this.grid.vectors[0].y - 50);
+
+   },this)
+
+   _.each(this.rowshapes, function(c, i) {
+
+      var vC = this.grid.orientation.indexOf(i);
+      c.translation.set(this.grid.vectors[0].x - 50, this.grid.vectors[vC].y);
+
+   },this)
+}

@@ -245,7 +245,7 @@ i.juice-1.fa-check {
    position: absolute;
    top: 50px;
    left: 50px;
-   width: 300px;
+   width: 500px;
 }
 
 .label-left.juice-0 {
@@ -258,6 +258,25 @@ i.juice-1.fa-check {
    position: absolute;
    top: 300px;
    right: 50px;
+}
+
+.label-up-left.juice-0 {
+   position: absolute;
+   top: 120px;
+   left: 100px;
+}
+
+.label-up-right.juice-0 {
+   position: absolute;
+   top: 120px;
+   right: 100px;
+}
+
+.label-bottom.juice-0 {
+   position: absolute;
+   top: 600px;
+   width: 600px;
+   text-align: center;
 }
 
 .btn.juice-0 {

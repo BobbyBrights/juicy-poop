@@ -675,10 +675,44 @@ Box.prototype.UNOUTLINE_EXTRA = function() {
 
 }
 
+Box.prototype.FROWN_ON = function() {
+   switch(juice) {
+
+      case 0:
+         this.face = two.makeGroup();
+
+         this.face.add(two.makeLine(-10, -10, 10, 10));
+         this.face.add(two.makeLine(-10,10,10,-10));
+
+         this.face.noFill();
+         this.face.stroke = 'black';
+         this.face.linewidth = 5;
+
+         this.group.add(this.face);
+
+         break;
+
+      default:
+         break;
+   }
+
+}
+
 Box.prototype.SMILE_ON = function() {
 
 
    switch(juice) {
+
+      case 0:
+
+         this.face = two.makeCircle(0,0,10);
+         this.face.noFill();
+         this.face.stroke = 'black';
+         this.face.linewidth = 5;
+
+         this.group.add(this.face);
+
+         break;
 
       case 1:
 
@@ -724,6 +758,9 @@ Box.prototype.SMILE_ON = function() {
 Box.prototype.SMILE_OFF = function() {
 
    switch(juice) {
+
+      case 0:
+         this.face.visible = false;
 
       case 1:
 

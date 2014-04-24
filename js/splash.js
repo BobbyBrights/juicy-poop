@@ -114,16 +114,12 @@ function Splash() {
                grid.orientation[0] = 1;
                grid.orientation[1] = 0;
                grid.orientation[2] = 2;
-               _.each(grid.boxes.all, function(b) {
-                  b.REDRAW();
-               })
 
-               grid.newCalcScore();
+               grid.redraw();
 
-               _.each(grid.boxes.scored, function(box) {
+               grid.smiles = true;
+               grid.execEffects();
 
-                  box.SMILE_ON();
-               })
 
             },
             completeFn: function() {
@@ -132,14 +128,13 @@ function Splash() {
          },
          {
             startFn: function() {
-               _.each(grid.boxes.scored, function(box) {
-                  box.SMILE_OFF();
-               })
+
                SWEEP(foreground, background);
+
                grid.addRow();
             },
             completeFn: function() {
-               return (grid.currentBest >= 4);
+               return grid.clusters[0].length >= 9;
             },
          },
          {
@@ -149,17 +144,38 @@ function Splash() {
                grid.orientation[2] = 0;
                grid.orientation[3] = 3;
 
-               _.each(grid.boxes.all, function(box) {
-                  box.REDRAW();
+               _.each(grid.boxes.all, function(b) {
+                  
+                  b.SMILE_OFF();
+
+                  if(b.row == 2 && b.col == 3) {
+                     b.FROWN_ON();
+                  }
+
+                  if(b.row == 2 && b.col == 0) {
+                     b.FROWN_ON();
+                  }
+
+                  if(b.row == 1 && b.col == 0) {
+                     b.FROWN_ON();
+                  }
+
+                  if(b.row == 1 && b.col == 3) {
+                     b.FROWN_ON();
+                  }
+
                })
+
+               grid.redraw();
             },
             completeFn: function() {
                //SWEEP(foreground, background);
-               return (grid.currentBest >= 4);
+               return true;
             },
          },
          {
             startFn: function() {
+               grid.execEffects();
 
                $('.btn')[0].innerHTML = 'part deux';
             },
@@ -174,7 +190,22 @@ function Splash() {
                grid.effects = true;
                setTimeout(function() { grid.addRow() }, 200);
                setTimeout(function() { grid.addRow() }, 400);
-               setTimeout(function() { grid.addRow() }, 600);
+               setTimeout(function() { 
+                  grid.addRow() 
+
+                  grid.orientation[0] = 2;
+                  grid.orientation[1] = 1;
+                  grid.orientation[2] = 0;
+                  grid.orientation[3] = 3;
+                  grid.orientation[4] = 6;
+                  grid.orientation[5] = 4;
+                  grid.orientation[6] = 5;
+
+                  grid.redraw();
+
+                  grid.execEffects();
+
+               }, 600);
 
             },
             completeFn: function() {
