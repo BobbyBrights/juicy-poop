@@ -61,13 +61,13 @@ function colorToString(color) {
             0: {
                   FILL: {
                            UPPER_THRESHOLD: { r: 200, g: 200, b: 200, a: 1 },
-          LOWER_THRESHOLD: { r: 100, g: 100, b: 100, a: 1 },
-          BELOW_THRESHOLD: { r: 20, g: 20, b: 20, a: 1 },
+                           BELOW_THRESHOLD: { r: 100, g: 100, b: 100, a: 1 },
+                           LOWER_THRESHOLD: { r: 20, g: 20, b: 20, a: 1 },
                         },
                   SHADOW: {
                              UPPER_THRESHOLD: { r: 30, g: 110, b: 110, a: 0.5 },
-                             LOWER_THRESHOLD: { r: 105, g: 35, b: 40, a: 0.5 },
-                             BELOW_THRESHOLD: { r: 30, g: 25, b: 30, a: 0.5 },
+                             BELOW_THRESHOLD: { r: 105, g: 35, b: 40, a: 0.5 },
+                             LOWER_THRESHOLD: { r: 30, g: 25, b: 30, a: 0.5 },
                           },
                   STROKE: {
                              UPPER_THRESHOLD: { r: 255, g: 255, b: 255, a: 0 },

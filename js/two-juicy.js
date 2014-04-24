@@ -18,10 +18,12 @@ $('#assets svg').each(function(i, el) {
    });
 });
 
+var sweepground = two.makeGroup();
 var background = two.makeGroup();
 var middleground = two.makeGroup();
 var foreground = two.makeGroup();
 
+sweepground.translation.set(two.width/2, two.width/2);
 background.translation.set(two.width/2, two.width/2);
 middleground.translation.set(two.width/2, two.width/2);
 foreground.translation.set(two.width/2, two.width/2);
@@ -36,13 +38,19 @@ two.bind('update', function(frameCount) {
 }).play();
 
 
-var svg = $('svg:last').offset();
+var svg = $('#game-container').offset();
+
+console.log(svg);
 
 $(document).ready(function() {
-   splash = new Splash(middleground, background, foreground);
+   setTimeout(function() {
+      splash = new Splash(middleground, background, foreground);
+   }, 500);
 
    $('#game-container *').addClass('juice-'+juice);
-   $('#game-container .next').on('mousedown', function() {
+   $('#game-container .next').on('mousedown', function(e) {
+      e.stopPropagation();
+      e.preventDefault();
       splash.nextTutorial();
    })
 })

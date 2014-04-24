@@ -4,11 +4,13 @@
    <title>P O O P</title>
 
    <link rel="stylesheet" href="css/main.css" type="text/css" />
+   <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 
    <script src="js/lib/csv.js"></script>
    <script src="js/lib/jquery-2.1.0.min.js"></script>
    <script src="js/lib/Tween.js"></script>
    <script src="js/lib/bufferloader.js"></script>
+   <script src="js/lib/jquery.easing.1.3.js"></script>
 </head>
 <body>
    <div id="assets" style="display: none;"> 
@@ -135,39 +137,129 @@
    <path fill="#FFFFFF" stroke="#000000" stroke-miterlimit="10" d="M41.5,92.5h-8V42.25V34.5H43h48.5v8h-50V92.5z M59,109h-8V58.75 V51h9.5H109v8H59V109z M91,150v-8h50V92h8v50.25V150h-9.5H91z M165.5,158v8.5H157h-49.5v-8h50v-50h8V158z"/>
 </svg>
 
+</div>
 
-
-   </div>
    <div id="game-container">
-      <div class="tut header step-0 right" style="top: 100px; left: 220px;">
+      <div class="tut header step-0 right center">
          Hey.
       </div>
-      <div class="tut header step-1 right" style="top: 100px; left: 120px;">
-         I'm E coli.
+      <div class="tut header step-1 right center"> 
+         I'm E. coli.
       </div>
-      <div class="tut header step-2 right" style="top: 100px; left: 120px;">
-         Pyroprint me.
-      </div>
-
-      <div class="tut header step-3 bottom" style="top: 50px; left: 50px;">
-         This is some DNA.
+      <div class="tut header step-2 bottom top-left"> 
+         Pyroprinting sequences my DNA.
       </div>
 
-      <div class="tut header step-4 bottom" style="top: 50px; left: 50px;">
-         Split it yo.
+      <div class="tut header step-3 bottom top-left"> 
+         These two weird DNA fragments ...
       </div>
 
-      <div class="tut header step-5 bottom" style="top: 50px; left: 50px;">
-         It's still split.
+      <div class="tut header step-4 bottom top-left"> 
+         Are we in the same strain?
       </div>
 
-      <div class="tut header step-6 bottom" style="top: 50px; left: 50px;">
+      <div class="tut header step-5 bottom top-left"> 
+         Similar or not similar.
+      </div>
+
+      <div class="tut header step-6 bottom top-left"> 
          POOP-SNOOP?
+      </div>
+
+      <div class="tut header step-7 bottom top-left">
+         Gotta compare 'em all.
+      </div>
+
+      <div class="tut header step-8 bottom top-left"> 
+         Click and drag!
+      </div>
+
+      <div class="tut header step-9 bottom top-left"> 
+         The smallest potential strain.
+      </div>
+
+      <div class="tut header step-10 bottom top-left"> 
+         Bigger is better.
+      </div>
+
+      <div class="tut header step-11 bottom top-left">
+         That's no strain.
+      </div>
+
+      <div class="tut header step-12 bottom top-left"> 
+         Science!
+      </div>
+
+      <div class="tut hint step-1 left bot-right">
+         E. coli is a serious food source contaminent and occasionally responsible for food product recalls.<br><br>Scientists want to monitor strains of E. coli to mitigate outbreaks.
+      </div>
+
+      <div class="tut hint step-2 left bot-right"> 
+         Pyroprinting is a cost-effective method.
+         <br><br>
+         By gathering DNA from a range of geographic locations, we can look for trends.
+      </div>
+
+      <div class="tut hint step-3 left bot-right"> 
+         ... the 16-23S region and the 23-5S region, are used to classify E. coli.
+      </div>
+
+      <div class="tut hint step-4 left bot-right"> 
+         Using science, we can determine how similar two E. coli are by comparing these regions.
+      </div>
+
+      <div class="tut hint step-5 left bot-right"> 
+         If two E. coli samples have a similar 16-23S region and a similar 23-5S region, then they are potentially in the same strain.
+      </div>
+
+      <div class="tut hint step-6 left bot-right">
+         POOP-SNOOP helps people identify strains in large datasets by looking for patterns.<br><br>
+         Three E. coli are compared to eachother in this matrix.
+      </div>
+
+      <div class="tut hint step-7 left bot-right"> 
+         Each sample is compared to every other sample twice. 
+         <br><br>
+         This captures the similarity between the 23-5S region and the 16-23S region.
+      </div>
+
+      <div class="tut hint step-8 left bot-right"> 
+         The matrix can be rearranged by clicking and dragging the cells along the diagonal.
+         <br><br>
+         Rows and columns are linked because they represent the same sample! Try it!
+      </div>
+      
+      <div class="tut hint step-9 left bot-right"> 
+         A potential strain is identified by creating a perfect square of cells that are matches!
+         <br><br>
+         Samples in a potential strain are happy!
+      </div>
+
+      <div class="tut hint step-10 left bot-right"> 
+         The matrix can consist of any number of E. coli samples.
+         <br><br>
+         With bigger puzzles we can find bigger strains.
+      </div>
+
+      <div class="tut hint step-11 left bot-right"> 
+         The strain must be formed centered on the diagonal. 
+         <br><br>
+         This strain isn't correct because it is not comparing both regions in the same two samples.
+      </div>
+
+      <div class="tut hint step-12 left bot-right"> 
+         Please take a minutes and complete the first survey now, thank you.
       </div>
 
       <div class="btn next">NEXT</div>
 
+      <i class="tut step-5 fa fa-times"></i> 
+      <i class="tut step-5 fa fa-check"></i> 
+
+      <div class="tut step-3 label-left">16-23S</div>
+      <div class="tut step-3 label-right">23-5S</div>
    </div>
+
 
    <script src="js/lib/two.js"></script>
    <script src="js/sounds.js"></script>
@@ -176,10 +268,7 @@
    <script src="js/box.js"></script>
    <script src="js/animations.js"></script>
    <script src="js/utilities.js"></script>
-   <script src="js/button.js"></script>
-   <script src="js/cssbutton.js"></script>
    <script src="js/game.js"></script>
-   <script src="js/tutorial.js"></script>
    <script src="js/two-juicy.js"></script>
 
 </body>

@@ -23,6 +23,8 @@ function Grid(group, background, foreground, data, size) {
    this.setBoxes();
 
 
+   this.effects = false;
+
    this.disabled = true;
    
    var grid = this;
@@ -35,7 +37,7 @@ function Grid(group, background, foreground, data, size) {
       b.SETTLE();
    });
 
-   SWEEP(this.foreground, this.background); 
+   SWEEP(this.foreground, sweepground); 
 
    $(document)
    .on('mousemove', { grid: this }, function(e) {
@@ -462,12 +464,19 @@ Grid.prototype.effectAfterScore = function() {
 
          randomChoice(background_animations)(grid.foreground, grid.background);
 
+         _.each(this.boxes.highlighted_extra, function(b) {
+            b.UNOUTLINE_EXTRA();
+         }, this);
+
+         _.each(this.boxes.highlighted, function(b) {
+            b.UNOUTLINE();
+         }, this);
+
          _.each(this.boxes.unscored, function(b) {
             b.SLIDE_OUT();
          }, this);
 
          _.each(this.boxes.scored, function(b) {
-            b.UNOUTLINE();
             b.SMILE_ON();
 
          }, this);
@@ -479,12 +488,17 @@ Grid.prototype.effectAfterScore = function() {
             $(document).trigger('mousedown');
          }, 5000);
 
-         $(this.group._renderer.elem).one('mousedown', function(event) { 
+         $(window).one('mousedown', function(event) { 
             event.stopPropagation();
 
             window.clearTimeout(timeout);
             stopAllTweens();
             SWEEP(grid.foreground, grid.background); 
+
+            _.each(grid.background.children, function(child) {
+
+               grid.background.remove(child);
+            })
 
             RESET(grid.group);
             _.each(grid.boxes.unscored, function(b) {
@@ -519,6 +533,10 @@ Grid.prototype.deselect = function() {
    }, this)
 
    this.selected.active = false;
+
+   if(this.effects) {
+      this.effectAfterScore();
+   }
 }
 
 Grid.prototype.swapOrientation = function(indexToSwap) {

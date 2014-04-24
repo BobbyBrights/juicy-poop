@@ -240,7 +240,9 @@ var BARS = function(foreground, background) {
 
 background_animations.push(BARS);
 
-var SWEEP = function(foreground, background) {
+var SWEEP = function() {
+
+   var group = sweepground;
 
    switch(juice) {
 
@@ -258,7 +260,7 @@ var SWEEP = function(foreground, background) {
          rect.noStroke();
          rect.visible = false;
 
-         background.add(rect);
+         group.add(rect);
 
          var dir = randomInt(0,4); //0 left, 1 top, 2 right, 3 bottom
          var x, y;
@@ -301,10 +303,10 @@ var SWEEP = function(foreground, background) {
 
             })
             .onComplete(function() {
-               _.each(background.children, function(v, i) {
+               _.each(group.children, function(v, i) {
 
                   if(v.id != this.rect.id) {
-                     background.remove(v)
+                     group.remove(v)
                   }
 
                }, this)
@@ -350,34 +352,52 @@ var ENTER_PYRO = function(group) {
    subgroup.add(line2);
    subgroup.add(circle2);
    subgroup.add(circle1);
+   subgroup.add(mag[0]);
+   subgroup.add(mag[1]);
+   subgroup.add(mag[2]);
 
    subgroup.translation.set(0,30);
 
-   _.each(mag, function(m, i) {
-      m.linewidth = 10;
-      m.cap = 'round';
-      m.stroke = 'orangered';
-      subgroup.add(m);
+   switch(juice) {
 
-      m.visible = false;
+      case 0:
 
-      var t = new TWEEN.Tween({ m: m, x: -100 })
-      .to({ x: 0 }, 2000)
-      .delay(120 * i)
-      .easing(TWEEN.Easing.Cubic.InOut)
-      .repeat(Infinity)
-      .onStart(function() {
-         this.m.visible = true;
-         this.m.vertices[1].origin = this.m.vertices[1].clone();
-         console.log(this.m.vertices);
-      })
-      .onUpdate(function() {
+         _.each(mag, function(m, i) {
+            m.linewidth = 10;
+            m.cap = 'round';
+            m.stroke = "#666";
+            m.visible = true;
+         }, this)
+         break;
 
-         this.m.vertices[1].x = this.m.vertices[1].origin.x + this.x;
-      })
-      .start();
-   })
+      case 1:
 
+         _.each(mag, function(m, i) {
+            m.linewidth = 10;
+            m.cap = 'round';
+            m.stroke = 'orangered';
+
+            m.visible = false;
+
+            var t = new TWEEN.Tween({ m: m, x: -100 })
+            .to({ x: 0 }, 2000)
+            .delay(120 * i)
+            .easing(TWEEN.Easing.Cubic.InOut)
+            .repeat(Infinity)
+            .onStart(function() {
+               this.m.visible = true;
+               this.m.vertices[1].origin = this.m.vertices[1].clone();
+               console.log(this.m.vertices);
+            })
+            .onUpdate(function() {
+               this.m.vertices[1].x = this.m.vertices[1].origin.x + this.x;
+            })
+            .start();
+         })
+         break;
+      default:
+         break;
+   }
 
    return subgroup;
 
@@ -393,46 +413,79 @@ var BUDDY = function(group) {
 
 BUDDY.prototype.ENTER = function() {
 
-   this.tween = new TWEEN.Tween({ buddy: this.buddy, x: 400 })
-      .to({ x: 0 }, 200)
-      .easing(TWEEN.Easing.Cubic.Out)
-      .onStart(function() {
+   switch(juice) {
+
+      case 0:
+
          this.buddy.visible = true;
-      })
-      .onUpdate(function() {
-         this.buddy.translation.y = this.x;
+         this.buddy.children[18].fill = '#666';
+         this.buddy.translation.set(0,0);
 
-      });
+         break;
 
-   var hover = new TWEEN.Tween({ buddy: this.buddy, x: 0 })
-      .to({ x: 10 }, 700)
-      .delay(100 * Math.random() + 100)
-      .yoyo(true)
-      .repeat(Infinity)
-      .easing(TWEEN.Easing.Cubic.InOut)
-      .onUpdate(function() {
-         this.buddy.translation.y = this.x;
-      })
-      .onComplete(function() {
-         this.buddy.visible = false;
-      })
+      case 1:
 
-   this.tween.chain(hover).start();
+         this.tween = new TWEEN.Tween({ buddy: this.buddy, x: 400 })
+            .to({ x: 0 }, 200)
+            .easing(TWEEN.Easing.Cubic.Out)
+            .onStart(function() {
+               this.buddy.visible = true;
+            })
+            .onUpdate(function() {
+               this.buddy.translation.y = this.x;
+
+            });
+
+         var hover = new TWEEN.Tween({ buddy: this.buddy, x: 0 })
+            .to({ x: 10 }, 700)
+            .delay(100 * Math.random() + 100)
+            .yoyo(true)
+            .repeat(Infinity)
+            .easing(TWEEN.Easing.Cubic.InOut)
+            .onUpdate(function() {
+               this.buddy.translation.y = this.x;
+            })
+            .onComplete(function() {
+               this.buddy.visible = false;
+            })
+
+         this.tween.chain(hover).start();
+
+         break;
+
+      default:
+         break;
+   }
 }
 
 BUDDY.prototype.MOVE = function() {
 
-   if(this.tween) {
-      this.tween.stop();
-   }
+   switch(juice) {
+      
+      case 0:
 
-   this.tween = new TWEEN.Tween({ buddy: this.buddy, x: this.buddy.translation.x, y: this.buddy.translation.y })
-      .to({ x: -350, y: 300 }, 1000)
-      .easing(TWEEN.Easing.Cubic.Out)
-      .onUpdate(function() {
-         this.buddy.translation.set(this.x, this.y);
-      })
-      .start();
+         this.buddy.visible = false;
+         this.buddy.translation.set(-350, 300);
+
+         break;
+
+      case 1:
+
+         if(this.tween) {
+            this.tween.stop();
+         }
+
+         this.tween = new TWEEN.Tween({ buddy: this.buddy, x: this.buddy.translation.x, y: this.buddy.translation.y })
+            .to({ x: -350, y: 300 }, 1500)
+            .easing(TWEEN.Easing.Cubic.InOut)
+            .onUpdate(function() {
+               this.buddy.translation.set(this.x, this.y);
+            })
+            .start();
+
+      default:
+         break;
+   }
 }
 
 function DNA(foreground) {
@@ -461,7 +514,6 @@ function DNA(foreground) {
 
 
    foreground.add(this.group);
-
 }
 
 DNA.prototype.DETWEEN = function() {
@@ -477,33 +529,54 @@ DNA.prototype.ENTER = function() {
 
    this.group.noFill();
    this.group.linewidth = 20;
-   this.dna1.stroke = 'blue';
-   this.dna2.stroke = 'red';
 
    this.tween = [];
 
    switch(juice) {
 
+      case 0:
+
+         this.dna1.stroke = "#666";
+         this.dna2.stroke = "#888";
+         this.group.translation.set(0,0);
+
+         break;
+
       case 1:
+         this.dna1.stroke = 'blue';
+         this.dna2.stroke = 'red';
 
-         this.tween.push(new TWEEN.Tween({ dna: this, r: 0, y: 0 })
-            .to({ r: Math.PI / 24 * Math.random(), y: -10 }, 2000)
-            .easing(TWEEN.Easing.Cubic.InOut)
-            .delay(Math.random() * 100 + 200)
-            .repeat(Infinity)
-            .yoyo(true)
-            .onUpdate(function() {
-               this.dna.group.translation.y = this.y;
-               this.dna.group.rotation = this.r;
-            })
-            .start());
+         var enter = new TWEEN.Tween({ dna: this, r: Math.PI * 12, scale: 0, opacity: 0, y: 0 })
+               .to({ r: 0, scale: this.group.scale, opacity: 1, y: -10  }, 5000)
+               .easing(TWEEN.Easing.Back.Out)
+               .onUpdate(function() {
+                  this.dna.group.translation.y = this.y;
+                  this.dna.group.rotation = this.r;
+                  this.dna.group.scale = this.scale;
+                  this.dna.group.opacity = this.opacity;
+               });
 
+
+         var spin = new TWEEN.Tween({ dna: this, r: 0, scale: this.group.scale })
+               .to({ r: -Math.PI / 6, scale: 2.1 }, 2000)
+               .easing(TWEEN.Easing.Cubic.InOut)
+               .repeat(Infinity)
+               .yoyo(true)
+               .onUpdate(function() {
+                  this.dna.group.rotation = this.r;
+                  this.dna.group.scale = this.scale;
+               });
+
+         enter.chain(spin).start();
+         //enter.start();
+
+         this.tween.push(enter);
+
+         /*
          this.tween.push(new TWEEN.Tween({ dna: this, x1: this.dna1.translation.x, x2: this.dna2.translation.x })
             .to({ x1: this.dna1.translation.x - 10, x2: this.dna1.translation.x + 10 }, 1400)
             .easing(TWEEN.Easing.Bounce.Out)
-            .delay(Math.random() * 200 + 4000)
-            .repeat(Infinity)
-            .yoyo(true)
+            .delay(4000)
             .onUpdate(function() {
 
                this.dna.dna1.translation.x = this.x1;
@@ -511,6 +584,7 @@ DNA.prototype.ENTER = function() {
             })
             .start());
 
+            */
          break;
       default:
          break;
@@ -519,24 +593,61 @@ DNA.prototype.ENTER = function() {
 
 DNA.prototype.SPLIT = function() {
 
-   console.log(this.dna1.vertices);
-
-
    this.dnacopy1 = this.dna1.clone();
    this.dnacopy2 = this.dna2.clone();
+   this.dnacopy1.linewidth = 20;
+   this.dnacopy2.linewidth = 20;
+   this.dnacopy1.noFill();
+   this.dnacopy2.noFill();
+
+   this.group.add(this.dnacopy1);
+   this.group.add(this.dnacopy2);
+
+
+   this.dots = [];
+   this.dots.push(two.makeCircle(-90, 0, 5));
+   this.dots.push(two.makeCircle(-75, 0, 5));
+   this.dots.push(two.makeCircle(-60, 0, 5));
+   
+   this.dots.push(two.makeCircle(60, 0, 5));
+   this.dots.push(two.makeCircle(75, 0, 5));
+   this.dots.push(two.makeCircle(90, 0, 5));
+
+   _.each(this.dots, function(dot) {
+      dot.noFill();
+      dot.noStroke();
+   })
+
+   this.group.add(this.dots);
+   
 
    switch(juice) {
+      case 0:
+
+         this.dna1.translation.x -= 40;
+         this.dnacopy1.translation.x += 40;
+         this.dna2.translation.x -= 40;
+         this.dnacopy2.translation.x += 40;
+
+         this.dnacopy1.stroke = "#666";
+         this.dnacopy2.stroke = "#888";
+
+         _.each(this.sep, function(sep) {
+            sep.opacity = 0;
+         })
+
+         _.each(this.dots, function(dot) {
+
+            dot.stroke = "black";
+         });
+
+         break;
       case 1:
       
-         this.dnacopy1.noFill();
          this.dnacopy1.stroke = 'blue';
-         this.dnacopy1.linewidth = 20;
-
-         this.dnacopy2.noFill();
          this.dnacopy2.stroke = 'red';
-         this.dnacopy2.linewidth = 20;
 
-         this.tween.push(new TWEEN.Tween({ 
+         var split = new TWEEN.Tween({ 
                dna: this, 
                r: this.group.rotation,
                x1: this.dna1.translation.x,
@@ -565,8 +676,33 @@ DNA.prototype.SPLIT = function() {
                this.dna.dnacopy1.translation.x = this.xc1;
                this.dna.dna2.translation.x = this.x2;
                this.dna.dnacopy2.translation.x = this.xc2;
-            })
-            .start());
+            }).start();
+
+
+            _.each(this.dots, function(dot, i) {
+
+               setTimeout(function(dna, dot) {
+
+
+                  dna.tween.push(new TWEEN.Tween({ dot: dot, scale: 1.4 })
+                     .to({ scale: 1 }, 600)
+                     .delay(1500)
+                     .repeat(Infinity)
+                     .easing(TWEEN.Easing.Back.Out)
+                     .onUpdate(function() {
+                        this.dot.scale = this.scale;
+                     })
+                     .onStart(function() {
+                        this.dot.stroke = 'black';
+                     })
+                     .onStop(function() {
+                        this.dot.scale = 1;
+                     })
+                     .start());
+
+               }, i * 300, this, dot);
+
+            }, this)
       
          break;
       default:
@@ -575,10 +711,36 @@ DNA.prototype.SPLIT = function() {
 
 }
 
+DNA.prototype.CHECK = function() {
+
+   switch(juice) {
+      case 0:
+         break;
+      case 1:
+         _.each(this.dots, function(dot, i) {
+
+            this.tween.push(new TWEEN.Tween({ dot: dot, scale: 1, x: dot.translation.x })
+               .to({ scale: 0, x: (i > 2 ? 60 : -60) }, 600)
+               .easing(TWEEN.Easing.Back.Out)
+               .onUpdate(function() {
+                  this.dot.scale = this.scale;
+                  this.dot.translation.x = this.x;
+               })
+               .onStart(function() {
+                  this.dot.stroke = 'black';
+               })
+               .start());
+         }, this);
+
+         break;
+      default:
+         break;
+   }
+   
+}
+
 DNA.prototype.DESTROY = function() {
-
    foreground.remove(this.group);
-
 }
 
 var OUR_BUDDY = function(foreground, background, html) {
@@ -665,10 +827,12 @@ var GRAB_INDICATOR = function() {
       case 0:
 
       _.each(grid.boxes.diagonal, function(box) {
-         box.shape.stroke = 'black';
-         box.shape.linewidth = 3;
+         box.chev.fill = 'black';
+         box.chev.visible = true;
+         box.chev.stroke = 'black';
+         box.chev.linewidth = 3;
 
-         setTimeout(function(box) { box.shape.noStroke(); }, 500, box);
+         setTimeout(function(box) { box.chev.visible = false; }, 500, box);
       })
 
       break;

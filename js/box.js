@@ -87,6 +87,14 @@ function Box(grid, row, col) {
    this.group.scale = 1;
    this.group.opacity = 1;
 
+   /* DEBUG
+   two.update();
+
+
+   $(this.group._renderer.elem).on('mouseenter', { box: this }, function(e) {
+      console.log(e.data.box.row, e.data.box.col);
+   });
+   */
 }
 
 Box.prototype.ADD = function() {
@@ -100,6 +108,7 @@ Box.prototype.ADD = function() {
    switch(juice) {
 
       case 0:
+         this.group.translation.set(this.grid.vectors[vC].x, this.grid.vectors[vR].y);
          break;
       case 1:
 
@@ -211,14 +220,12 @@ Box.prototype.REDRAW = function() {
 
          var end = new Two.Vector(this.grid.vectors[vC].x, this.grid.vectors[vR].y);
 
-         if(this.tween['move']) {
-            this.tween['move'].stop();
-         }
-
          this.tween['move'] = new TWEEN.Tween({ 
                box: this,
                x: this.group['translation'].x, 
-               y: this.group['translation'].y 
+               y: this.group['translation'].y,
+               endx: end.x,
+               endy: end.y
             })
             .to({ 
                x: end.x, 
@@ -227,6 +234,9 @@ Box.prototype.REDRAW = function() {
             .easing(TWEEN.Easing.Cubic.Out)
             .onUpdate(function() {
                this.box.group.translation.set(this.x, this.y);
+            })
+            .onStop(function() {
+               this.box.group.translation.set(this.endx, this.endy);
             })
             .start();
 
@@ -311,6 +321,7 @@ Box.prototype.SLIDE_OUT = function() {
       .to({ 
          x: destination 
       }, 200)
+      .delay(100)
       .easing(TWEEN.Easing.Cubic.Out)
       .onUpdate(function() {
          this.box.shape.translation.x = this.x;
@@ -325,6 +336,15 @@ Box.prototype.SLIDE_OUT = function() {
    .onStart(function() {
       this.box.grid.disabled = true;
       this.box.group.opacity = 0.3;
+
+      if(this.box.tween['highlight']) {
+         this.box.tween['highlight'].stop(); 
+      }
+
+      if(this.box.tween['move']) {
+         this.box.tween['move'].stop(); 
+      }
+
    })
    .start();
 }
@@ -363,6 +383,9 @@ Box.prototype.SETTLE = function() {
    switch(juice) {
 
       case 0:
+
+         this.visible = true;
+         this.shape.visible = true;
 
          break;
 
@@ -510,8 +533,10 @@ Box.prototype.OUTLINE = function() {
          if(this.disabled['highlight']) {
             return;
          }
-         this.shape.stroke = "black";
-         this.shape.linewidth = 10;
+         //this.shape.stroke = "black";
+         //this.shape.linewidth = 10;
+         this.chev.visible = true;
+         this.chev.fill = 'black';
 
          //ensures that the highlighted this will be moved to front after all the others
          var box = this;
@@ -718,6 +743,7 @@ Box.prototype.UNOUTLINE = function() {
    switch(juice) {
       case 0:
          this.shape.noStroke();
+         this.chev.visible = false;
          break;
 
       case 1:
