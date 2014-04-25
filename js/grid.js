@@ -22,7 +22,7 @@ function Grid(group, background, foreground, data, size) {
    this.setVectors(this.attributes.numRows);
    this.setBoxes();
 
-   this.addLabels();
+   //this.addLabels();
 
 
    this.effects = false;
@@ -38,8 +38,6 @@ function Grid(group, background, foreground, data, size) {
    _.each(this.boxes.all, function(b) {
       b.SETTLE();
    });
-
-   SWEEP(this.foreground, sweepground); 
 
    $(document)
    .on('mousemove', { grid: this }, function(e) {
@@ -138,8 +136,10 @@ Grid.prototype.addRow = function() {
    this.boxes.all = this.boxes.all.concat(this.boxes.adding);
 
 
-   this.labels.REMOVE();
-   this.addLabels();
+   if(this.labels) {
+      this.removeLabels();
+      this.addLabels();
+   }
 }
 
 Grid.prototype.setOrientation = function(numOrientation) {
@@ -461,51 +461,64 @@ Grid.prototype.disableMouse = function() {
 
 Grid.prototype.effectAfterScore = function() {
 
-   this.newCalcScore();
+   var winCondition = this.clusters[0].length > 9;
 
-   if(this.boxes.scored.length > 0) {
+   if(winCondition) {
+      $('.winCondition').addClass('active');
+   }
 
-      if(juice > 0) {
+   switch(juice) {
 
-         randomChoice(background_animations)(grid.foreground, grid.background);
+      case 0:
+         break;
 
-         _.each(this.boxes.highlighted_extra, function(b) {
-            b.UNOUTLINE_EXTRA();
-         }, this);
+      case 1:
 
-         _.each(this.boxes.highlighted, function(b) {
-            b.UNOUTLINE();
-         }, this);
+         this.highlight(null);
 
          _.each(this.boxes.unscored, function(b) {
-            b.SLIDE_OUT();
-         }, this);
-
-         _.each(this.boxes.scored, function(b) {
-            b.SMILE_ON();
-
+            b.FADE_OUT();
          }, this);
 
          SHAKE(grid.group, this.clusters[0].length);
 
-         var timeout = setTimeout(function() {
-            console.log('triggering');
-            $(document).trigger('mousedown');
-         }, 5000);
+
+         if(!winCondition) {
+            for(var i = 1; i < Math.sqrt(this.clusters[0].length); i++) {
+               randomChoice(background_animations)();
+            }
+
+            window.mousedownTimeout = setTimeout(function() {
+               $(window).trigger('mousedown');
+            }, 5000);
+         } else {
+
+            for(var i = 0; i < background_animations.length; i++) {
+               background_animations[i]();
+            }
+
+         }
+
+         grid.disabled = true;
 
          $(window).one('mousedown', function(event) { 
             event.stopPropagation();
+            event.preventDefault();
 
-            window.clearTimeout(timeout);
+            clearTimeout(window.mousedownTimeout);
+
+            SWEEP();
             stopAllTweens();
-            SWEEP(grid.foreground, grid.background); 
 
-            _.each(grid.background.children, function(child) {
-
-               grid.background.remove(child);
-            })
+            grid.disabled = false;
 
             RESET(grid.group);
+            _.each(grid.boxes.unscored, function(b) {
+               b.FADE_IN();
+            });
+            /*
+
+
             _.each(grid.boxes.unscored, function(b) {
                b.SLIDE_IN();
             });
@@ -513,12 +526,15 @@ Grid.prototype.effectAfterScore = function() {
             grid.highlight(null);
             setTimeout(function() {
                grid.highlight(grid.getNearestRow(mouse));
+               
             }, 1000);
+            */
 
          });
 
-
-      }
+         break;
+      default:
+      break;
    }
 }
 
@@ -573,7 +589,9 @@ Grid.prototype.swapOrientation = function(indexToSwap) {
       b.REDRAW();
    }, this)
 
-   this.labels.REDRAW();
+   if(this.labels) {
+      this.labels.REDRAW();
+   }
 
    this.selected.index = this.orientation.indexOf(this.selected.row);
 }
@@ -657,10 +675,19 @@ Grid.prototype.redraw = function() {
       b.REDRAW();
    });
 
-   this.labels.REDRAW();
+   if(this.labels) {
+      this.labels.REDRAW();
+   }
 }
 
 Grid.prototype.addLabels = function() {
    this.labels = new LABELS(this);
    this.labels.REDRAW();
+}
+
+Grid.prototype.removeLabels = function() {
+   if(this.labels) {
+      this.labels.REMOVE();
+   }
+   this.labels = null;
 }

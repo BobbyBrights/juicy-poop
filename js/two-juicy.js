@@ -40,12 +40,16 @@ two.bind('update', function(frameCount) {
 
 var svg = $('#game-container').offset();
 
-console.log(svg);
-
 $(document).ready(function() {
-   setTimeout(function() {
-      splash = new Splash(middleground, background, foreground);
-   }, 500);
+
+   if("testGrid" in window) {
+      grid = new Grid(middleground, background, foreground, data, 7);
+      grid.effects = true;
+   } else {
+      setTimeout(function() {
+         splash = new Splash(middleground, background, foreground);
+      }, 500);
+   }
 
    $('#game-container *').addClass('juice-'+juice);
    $('#game-container .next').on('mousedown', function(e) {
@@ -53,20 +57,4 @@ $(document).ready(function() {
       e.preventDefault();
       splash.nextTutorial();
    })
-
-
-   if(juice == 0 && ab == 1) {
-      $('a.tutorial-form-link').attr('href', 'https://docs.google.com/forms/d/1Tr-ylX5xNNuxB1NZN-bHRXLpoPF-x9ZCtHvZwhBhnS8/viewform?usp=send_form');
-      $('a.final-form-link').attr('href', 'https://docs.google.com/forms/d/1bGVEfkIEcujAn4XLoF_wa9ectCzxvmICf3ewQDms44o/viewform?usp=send_form');
-      
-   } else if(juice == 1 && ab == 1) {
-      $('a.final-form-link').attr('href', 'ab yes juice yes');
-      
-   } else if(juice == 1 && ab == 0) {
-
-      $('a.final-form-link').attr('href', 'ab no juice yes');
-
-   } else {
-      $('a.final-form-link').attr('href', 'ab no juice no');
-   }
 })

@@ -16,7 +16,7 @@ var SHAKE = function(group, intensity) {
    }
 
    var t = new TWEEN.Tween({ translation_x: group.translation.x })
-      .to({ translation_x: group.translation.x + (3*(intensity-9)) }, intensity*2) 
+      .to({ translation_x: group.translation.x + (3*(intensity-4)) }, intensity*2) 
       .delay(50)
       .repeat(3)
       .yoyo(true)
@@ -46,7 +46,9 @@ var RESET = function(group) {
    t.chain(t2).start();
 }
 
-var SQUARES = function(foreground, background, repeat) {
+var SQUARES = function(repeat) {
+
+   var group = sweepground;
 
    if(repeat == undefined) {
       repeat = Infinity;
@@ -59,8 +61,7 @@ var SQUARES = function(foreground, background, repeat) {
       rect.linewidth = 4;
       rect.stroke = "rgba(100,100,100,1)";
       rect.visible = false;
-      //rect.rotation= ;
-      background.add(rect);
+      group.add(rect);
 
       tweens.push(new TWEEN.Tween({ scale: 1, rect: rect, i: i })
          .to({ scale: 0.5 }, 300)
@@ -75,15 +76,16 @@ var SQUARES = function(foreground, background, repeat) {
             this.rect.scale = this.scale;
          })
          .onComplete(function() {
-            background.remove(this.rect);
+            group.remove(this.rect);
          })
          .start());
    }
 }
 background_animations.push(SQUARES);
 
-var INTENSE = function(foreground, background) {
+var INTENSE = function() {
 
+   var group = sweepground;
    var lines = 60;
 
    for(var i = 0; i < lines; i++) {
@@ -100,7 +102,7 @@ var INTENSE = function(foreground, background) {
 
       line.visible = false;
 
-      background.add(line);
+      group.add(line);
 
       var enter = new TWEEN.Tween({ line: line, r: Math.PI*2*(i/lines) })
          .to({ r: Math.PI*2*(i/lines)+((i%2==0?-1:1)*Math.PI*2*(1/lines)) }, 300)
@@ -125,7 +127,7 @@ var INTENSE = function(foreground, background) {
          })
          .onComplete(function() {
 
-            background.remove(this.line);
+            group.remove(this.line);
          });
 
       enter.chain(exit).start();
@@ -136,8 +138,9 @@ var INTENSE = function(foreground, background) {
 }
 background_animations.push(INTENSE);
 
-var BUBBLES = function(foreground, background) {
+var BUBBLES = function() {
 
+   var group = sweepground;
    var bubbles = 70;
 
    for(var i = 0; i < bubbles; i++) {
@@ -163,9 +166,9 @@ var BUBBLES = function(foreground, background) {
       //circle.stroke = "black";
       //circle.linewidth = 1;
       circle.visible = false;
-      background.add(circle);
+      group.add(circle);
 
-      background.rotation = Math.random() * Math.PI * 2;
+      group.rotation = Math.random() * Math.PI * 2;
 
       BUBBLES.tween = new TWEEN.Tween({ circle: circle, y: y, x: x })
          .to({ y: dest_y, x: dest_x }, 500)
@@ -183,7 +186,7 @@ var BUBBLES = function(foreground, background) {
          })
          .onComplete(function() {
 
-            background.remove(this.circle);
+            group.remove(this.circle);
          })
          .start();
 
@@ -191,7 +194,9 @@ var BUBBLES = function(foreground, background) {
 }
 background_animations.push(BUBBLES);
 
-var BARS = function(foreground, background) {
+var BARS = function() {
+
+   var group = sweepground;
 
    var bars = 50;
    var width = Math.sqrt(two.width*two.width*2) * (1.0/bars);
@@ -207,7 +212,7 @@ var BARS = function(foreground, background) {
       rect.fill = colorToString(color);
       rect.noStroke();
       rect.visible = false;
-      background.add(rect);
+      group.add(rect);
 
       var dest = (two.width) * (isLeft?-1:1);
       var start = (two.width) * (isLeft?1:-1);
@@ -221,17 +226,17 @@ var BARS = function(foreground, background) {
             this.rect.visible = true;
 
             if(this.i == 0) {
-               background.rotation = Math.random() * Math.PI * 2;
+               group.rotation = Math.random() * Math.PI * 2;
             }
          })
          .onUpdate(function() {
             this.rect.translation.x = this.x;
          })
          .onComplete(function() {
-            background.remove(this.rect);
+            group.remove(this.rect);
 
             if(this.i == 50) {
-               background.rotation = 0;
+               group.rotation = 0;
             }
          })
          .start();
@@ -490,24 +495,45 @@ BUDDY.prototype.MOVE = function() {
 
 function DNA(foreground) {
 
-   this.group = assets[9];
-   this.group.visible = false;
-   this.group.stroke = 'black';
-   this.group.linewidth = 2;
+   this.dna1 = assets[9].clone();
+   this.dna2 = assets[9].clone();
 
-   this.group.scale = 2;
+   this.dna1.scale = 1.8;
+   this.dna2.scale = 2;
+
+   this.group = two.makeGroup();
+   this.group.add(this.dna1).add(this.dna2);
+
+   this.dna1.visible = false;
+   this.dna2.visible = false;
+
+   this.group.scale = 1;
 
    this.sep = [];
+   this.seg1 = [];
+   this.seg2 = [];
 
    var index = 0;
-   _.each(this.group.children, function(seg, i) {
-      if(index == 0) {
-         this.dna1 = seg;
-      } else if (index == 2) {
-         this.dna2 = seg;
-      } else {
-
+   _.each(this.dna1.children, function(seg, i) {
+      if(index == 1 || index == 3) {
          this.sep.push(seg);
+      } else if (index == 0) {
+         this.seg1.push(seg);
+      } else {
+         this.seg2.push(seg);
+      }
+
+      index++;
+   }, this)
+
+   var index = 0;
+   _.each(this.dna2.children, function(seg, i) {
+      if(index == 1 || index == 3) {
+         this.sep.push(seg);
+      } else if (index == 0) {
+         this.seg1.push(seg);
+      } else {
+         this.seg2.push(seg);
       }
       index++;
    }, this)
@@ -526,6 +552,8 @@ DNA.prototype.DETWEEN = function() {
 DNA.prototype.ENTER = function() {
 
    this.group.visible = true;
+   this.dna1.visible = true;
+   this.dna2.visible = true;
 
    this.group.noFill();
    this.group.linewidth = 20;
@@ -543,11 +571,19 @@ DNA.prototype.ENTER = function() {
          break;
 
       case 1:
-         this.dna1.stroke = 'blue';
-         this.dna2.stroke = 'red';
+
+         _.each(this.sep, function(seg) {
+            seg.stroke = 'black';
+         });
+         _.each(this.seg1, function(seg) {
+            seg.stroke = 'red';
+         });
+         _.each(this.seg2, function(seg) {
+            seg.stroke = 'blue';
+         });
 
          var enter = new TWEEN.Tween({ dna: this, r: Math.PI * 12, scale: 0, opacity: 0, y: 0 })
-               .to({ r: 0, scale: this.group.scale, opacity: 1, y: -10  }, 5000)
+               .to({ r: 0, scale: 1, opacity: 1, y: -10  }, 5000)
                .easing(TWEEN.Easing.Back.Out)
                .onUpdate(function() {
                   this.dna.group.translation.y = this.y;
@@ -557,8 +593,8 @@ DNA.prototype.ENTER = function() {
                });
 
 
-         var spin = new TWEEN.Tween({ dna: this, r: 0, scale: this.group.scale })
-               .to({ r: -Math.PI / 6, scale: 2.1 }, 2000)
+         var spin = new TWEEN.Tween({ dna: this, r: 0, scale: 1 })
+               .to({ r: -Math.PI / 6, scale: 1.1 }, 2000)
                .easing(TWEEN.Easing.Cubic.InOut)
                .repeat(Infinity)
                .yoyo(true)
@@ -593,25 +629,15 @@ DNA.prototype.ENTER = function() {
 
 DNA.prototype.SPLIT = function() {
 
-   this.dnacopy1 = this.dna1.clone();
-   this.dnacopy2 = this.dna2.clone();
-   this.dnacopy1.linewidth = 20;
-   this.dnacopy2.linewidth = 20;
-   this.dnacopy1.noFill();
-   this.dnacopy2.noFill();
-
-   this.group.add(this.dnacopy1);
-   this.group.add(this.dnacopy2);
-
 
    this.dots = [];
-   this.dots.push(two.makeCircle(-90, 0, 5));
-   this.dots.push(two.makeCircle(-75, 0, 5));
-   this.dots.push(two.makeCircle(-60, 0, 5));
+   this.dots.push(two.makeCircle(-160, 0, 5));
+   this.dots.push(two.makeCircle(-140, 0, 5));
+   this.dots.push(two.makeCircle(-120, 0, 5));
    
-   this.dots.push(two.makeCircle(60, 0, 5));
-   this.dots.push(two.makeCircle(75, 0, 5));
-   this.dots.push(two.makeCircle(90, 0, 5));
+   this.dots.push(two.makeCircle(160, 0, 5));
+   this.dots.push(two.makeCircle(140, 0, 5));
+   this.dots.push(two.makeCircle(120, 0, 5));
 
    _.each(this.dots, function(dot) {
       dot.noFill();
@@ -624,16 +650,13 @@ DNA.prototype.SPLIT = function() {
    switch(juice) {
       case 0:
 
-         this.dna1.translation.x -= 40;
-         this.dnacopy1.translation.x += 40;
-         this.dna2.translation.x -= 40;
-         this.dnacopy2.translation.x += 40;
 
-         this.dnacopy1.stroke = "#666";
-         this.dnacopy2.stroke = "#888";
+         this.dna1.translation.x -= 100;
+         this.dna2.translation.x += 100;
 
          _.each(this.sep, function(sep) {
-            sep.opacity = 0;
+            sep.stroke = 'black';
+            sep.opacity = 0.2;
          })
 
          _.each(this.dots, function(dot) {
@@ -643,46 +666,43 @@ DNA.prototype.SPLIT = function() {
 
          break;
       case 1:
-      
-         this.dnacopy1.stroke = 'blue';
-         this.dnacopy2.stroke = 'red';
+
 
          var split = new TWEEN.Tween({ 
                dna: this, 
                r: this.group.rotation,
                x1: this.dna1.translation.x,
-               xc1: this.dnacopy1.translation.x,
-               x2: this.dna2.translation.x,
-               xc2: this.dnacopy2.translation.x,
+               x2: this.dna2.translation.x + 1000,
+               dnao: 0,
                o: 1
             })
             .to({
                r: 0,
-               x1: this.dna1.translation.x - 40,
-               xc1: this.dnacopy1.translation.x + 40,
-               x2: this.dna2.translation.x - 40,
-               xc2: this.dnacopy2.translation.x + 40,
-               o: 0
+               x1: this.dna1.translation.x - 70,
+               x2: this.dna2.translation.x + 70,
+               dnao: 1,
+               o: 0.2
             }, 1000)
             .easing(TWEEN.Easing.Cubic.InOut)
             .onUpdate(function() {
 
-               _.each(this.dna.sep, function(sep) {
-                  sep.opacity = this.o;
-               }, this)
+               this.dna.dna2.opacity = this.dnao;
+               //this.dna.dna1.opacity = this.dnao;
+
+               _.each(this.dna.sep, function(seg) {
+                  seg.opacity = this.o;
+               }, this);
+
 
                this.dna.group.rotation = this.r;
                this.dna.dna1.translation.x = this.x1;
-               this.dna.dnacopy1.translation.x = this.xc1;
                this.dna.dna2.translation.x = this.x2;
-               this.dna.dnacopy2.translation.x = this.xc2;
             }).start();
 
 
             _.each(this.dots, function(dot, i) {
 
                setTimeout(function(dna, dot) {
-
 
                   dna.tween.push(new TWEEN.Tween({ dot: dot, scale: 1.4 })
                      .to({ scale: 1 }, 600)
@@ -857,6 +877,9 @@ var LABELS = function(grid) {
 
    for(var i = 0; i < grid.vectors.length; i++) {
 
+      var rowshape = two.makeRectangle(0,0, grid.vectors.length * 110, 15);
+      var colshape = two.makeRectangle(0,0, 15, grid.vectors.length * 110);
+/*
       if(i == 0) {
          var rowshape = two.makeCircle(0,0,1);
          var colshape = two.makeCircle(0,0,1);
@@ -877,10 +900,19 @@ var LABELS = function(grid) {
 
       colshape.stroke = 'black';
       colshape.linewidth = 4;
+      */
+
+      rowshape.fill= colorToString(colors[juice]['BACKGROUND_FILL'][i]);
+      colshape.fill = colorToString(colors[juice]['BACKGROUND_FILL'][i]);
+      rowshape.stroke = "white";
+      colshape.stroke = "white";
+
+      rowshape.linewidth = 3;
+      colshape.linewidth = 3;
 
       //console.log(grid, colshape, rowshape);
-      grid.foreground.add(colshape);
-      grid.foreground.add(rowshape);
+      grid.background.add(colshape);
+      grid.background.add(rowshape);
 
       this.colshapes.push(colshape);
       this.rowshapes.push(rowshape);
@@ -891,8 +923,8 @@ var LABELS = function(grid) {
 
 LABELS.prototype.REMOVE = function() {
 
-   this.grid.foreground.remove(this.colshapes);
-   this.grid.foreground.remove(this.rowshapes);
+   this.grid.background.remove(this.colshapes);
+   this.grid.background.remove(this.rowshapes);
 }
 
 LABELS.prototype.REDRAW = function() {
@@ -901,14 +933,14 @@ LABELS.prototype.REDRAW = function() {
    _.each(this.colshapes, function(c, i) {
 
       var vC = this.grid.orientation.indexOf(i);
-      c.translation.set(this.grid.vectors[vC].x, this.grid.vectors[0].y - 50);
+      c.translation.set(this.grid.vectors[vC].x, 0);
 
    },this)
 
    _.each(this.rowshapes, function(c, i) {
 
       var vC = this.grid.orientation.indexOf(i);
-      c.translation.set(this.grid.vectors[0].x - 50, this.grid.vectors[vC].y);
+      c.translation.set(0, this.grid.vectors[vC].y);
 
    },this)
 }

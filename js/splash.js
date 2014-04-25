@@ -6,7 +6,7 @@ function Splash() {
          {
             startFn: function(splash) {
 
-               SWEEP(foreground, background);
+               SWEEP();
 
                splash.buddy = new BUDDY(background);
                splash.buddy.ENTER();
@@ -18,7 +18,7 @@ function Splash() {
          {
             startFn: function(splash) {
 
-               SWEEP(foreground, background);
+               SWEEP();
             },
             completeFn: function() {
                return true;
@@ -27,7 +27,7 @@ function Splash() {
          {
             startFn: function(splash) {
                splash.pyro = ENTER_PYRO(foreground);
-               SWEEP(foreground, background);
+               SWEEP();
             },
             completeFn: function(grid) {
                return true;
@@ -38,7 +38,7 @@ function Splash() {
 
                splash.buddy.MOVE();
 
-               SWEEP(foreground, background);
+               SWEEP();
 
                foreground.remove(splash.pyro)
 
@@ -54,7 +54,7 @@ function Splash() {
          {
             startFn: function(grid) {
                splash.dna.SPLIT();
-               SWEEP(foreground, background);
+               SWEEP();
             },
             completeFn: function(grid) {
                splash.dna.DETWEEN();
@@ -62,19 +62,11 @@ function Splash() {
             }
          },
          {
-            startFn: function(grid) {
-               splash.dna.CHECK();
-               SWEEP(foreground, background);
-            },
-            completeFn: function(grid) {
-               return true;
-            }
-         },
-         {
             startFn: function() {
                splash.dna.DESTROY();
                grid = new Grid(middleground, background, foreground, data, 3);
-               SWEEP(foreground, background);
+               grid.addLabels();
+               SWEEP();
             },
             completeFn: function(grid) {
                return true;
@@ -82,29 +74,17 @@ function Splash() {
          },
          {
             startFn: function() {
-               _.each(grid.boxes.all, function(box) {
-                  box.HIGHLIGHT_REGION();
-               })
+               SWEEP();
             },
             completeFn: function() {
-               SWEEP(foreground, background);
-
-               _.each(grid.boxes.all, function(box) {
-                  box.UNHIGHLIGHT();
-               })
                return true;
             }
          },
          {
             startFn: function() {
+               SWEEP();
             },
             completeFn: function() {
-               /*if(grid.orientation[0] == 0 && grid.orientation[1] == 1 && grid.orientation[2] == 2) {
-
-                  GRAB_INDICATOR();
-                  return false;
-               }*/
-               SWEEP(foreground, background);
                return true;
             },
          },
@@ -120,6 +100,8 @@ function Splash() {
                grid.smiles = true;
                grid.execEffects();
 
+               SWEEP();
+
 
             },
             completeFn: function() {
@@ -129,9 +111,19 @@ function Splash() {
          {
             startFn: function() {
 
-               SWEEP(foreground, background);
+               grid.removeLabels();
+               SWEEP();
 
                grid.addRow();
+            },
+            completeFn: function() {
+               return true;
+            },
+         },
+         {
+            startFn: function() {
+
+               SWEEP();
             },
             completeFn: function() {
                return grid.clusters[0].length >= 9;
@@ -139,6 +131,8 @@ function Splash() {
          },
          {
             startFn: function() {
+               SWEEP();
+
                grid.orientation[0] = 2;
                grid.orientation[1] = 1;
                grid.orientation[2] = 0;
@@ -169,13 +163,13 @@ function Splash() {
                grid.redraw();
             },
             completeFn: function() {
-               //SWEEP(foreground, background);
                return true;
             },
          },
          {
             startFn: function() {
-               grid.execEffects();
+
+               BARS();
 
                $('.btn')[0].innerHTML = 'part deux';
             },
@@ -185,14 +179,14 @@ function Splash() {
          },
          {
             startFn: function() {
+               SWEEP();
                $('.btn').remove();
 
-               grid.effects = true;
                setTimeout(function() { grid.addRow() }, 200);
                setTimeout(function() { grid.addRow() }, 400);
+               setTimeout(function() { grid.addRow() }, 600);
                setTimeout(function() { 
-                  grid.addRow() 
-
+               
                   grid.orientation[0] = 2;
                   grid.orientation[1] = 1;
                   grid.orientation[2] = 0;
@@ -202,10 +196,11 @@ function Splash() {
                   grid.orientation[6] = 5;
 
                   grid.redraw();
-
                   grid.execEffects();
 
-               }, 600);
+                  grid.effects = true;
+
+               }, 1000);
 
             },
             completeFn: function() {
@@ -236,19 +231,23 @@ Splash.prototype.nextTutorial = function() {
 
       this.tutorial.steps[++this.tutorial.index].startFn(this);
 
-      $('#game-container .active').removeClass('active');
+      $('#game-container .active').removeClass('active')
       $('#game-container .tut.step-' + this.tutorial.index).addClass('active');
 
-      /*
-      $('.juice-1.active.center').animate({ 
-         left: '-=100px',
-         opacity: '1',
-      }, 500, 'easeOutCubic', null );
+      $('#game-container .btn').addClass('disabled').removeClass('pulse');
 
-      $('.juice-1.active.top-left').animate({ 
-         left: '-=100px',
-         opacity: '1',
-      }, 500, 'easeOutCubic', null );
-      */
+      setTimeout(function() {
+         $('#game-container .btn').removeClass('disabled');
+      }, 1500);
+
+      if("bt" in window) {
+         clearInterval(window.bt);
+      }
+
+      setTimeout(function() {
+         window.bt = setInterval(function() {
+            $('#game-container .btn').toggleClass('pulse');
+         }, 500);
+      }, 3000);
    }
 }

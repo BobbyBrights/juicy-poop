@@ -201,7 +201,6 @@ Box.prototype.REDRAW_MOUSE = function(mouse) {
 
 Box.prototype.REDRAW = function() {
 
-
    switch(juice) { 
 
       case 0:
@@ -236,6 +235,12 @@ Box.prototype.REDRAW = function() {
                this.box.group.translation.set(this.x, this.y);
             })
             .onStop(function() {
+               console.log('stoping redraw');
+
+               //var vC = grid.orientation.indexOf(this.box.col);
+               //var vR = grid.orientation.indexOf(this.box.row);
+               //this.box.group.translation.set(grid.vectors[vC].x, grid.vectors[vR].y);
+
                this.box.group.translation.set(this.endx, this.endy);
             })
             .start();
@@ -249,8 +254,12 @@ Box.prototype.REDRAW = function() {
 
 Box.prototype.SLIDE_IN = function() {
 
-   this.tween['slide'] = new TWEEN.Tween({ box: this, x: this.shape.translation.x }) 
-      .to({ x: 0 }, 200)
+   this.tween['slide'] = new TWEEN.Tween({ 
+      box: this, 
+      x: this.shape.translation.x,
+      y: this.shape.translation.y,
+   }) 
+      .to({ x: 0, y: 0 }, 200)
       .easing(TWEEN.Easing.Cubic.Out)
       .onUpdate(function() {
          this.box.shape.translation.x = this.x;
@@ -305,6 +314,18 @@ Box.prototype.UNHIGHLIGHT = function() {
 
 Box.prototype.SLIDE_OUT = function() {
 
+   if(this.tween['move']) {
+      this.tween['move'].stop();
+   }
+
+   if(this.tween['highlight']) {
+      this.tween['highlight'].stop();
+   }
+
+   if(this.tween['chev']) {
+      this.tween['chev'].stop();
+   }
+
 
    if(this.group.translation.y > this.group.translation.x) {
       var destination = -two.width * 0.2;
@@ -316,12 +337,12 @@ Box.prototype.SLIDE_OUT = function() {
 
    this.tween['slide'] = new TWEEN.Tween({ 
          box: this,
-         x: this.shape.translation.x 
+         x: 0,
       }) 
       .to({ 
          x: destination 
       }, 200)
-      .delay(100)
+      .delay(400)
       .easing(TWEEN.Easing.Cubic.Out)
       .onUpdate(function() {
          this.box.shape.translation.x = this.x;
@@ -490,7 +511,6 @@ Box.prototype.OUTLINE_EXTRA = function() {
 
                this.box.shadow.translation.x = this.sh;
                this.box.shadow.translation.y = this.sh;
-
 
                this.box.face.translation.x = this.tr;
                this.box.face.translation.y = this.tr;
@@ -678,6 +698,22 @@ Box.prototype.UNOUTLINE_EXTRA = function() {
 Box.prototype.FROWN_ON = function() {
    switch(juice) {
 
+      case 1:
+
+         this.x = two.makeGroup();
+
+         this.x.add(two.makeLine(-10, -10, 10, 10));
+         this.x.add(two.makeLine(-10,10,10,-10));
+
+         this.x.noFill();
+         this.x.stroke = 'black';
+         this.x.linewidth = 5;
+
+         this.face.add(this.x);
+         this.face.scale = 1;
+
+         break;
+
       case 0:
          this.face = two.makeGroup();
 
@@ -756,6 +792,10 @@ Box.prototype.SMILE_ON = function() {
 }
 
 Box.prototype.SMILE_OFF = function() {
+
+   if(this.x) {
+      this.face.remove(this.x);
+   }
 
    switch(juice) {
 
