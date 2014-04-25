@@ -279,6 +279,11 @@
    color: blue; 
 }
 
+.hint.step-13 {
+   top: 600px;
+
+}
+
 .btn.juice-0.disabled {
    color: #bbb;
    pointer-events: none;
