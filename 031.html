@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title>P O O P S N O O P</title>
+
+   <link rel="stylesheet" href="css/main.css" type="text/css" />
+   <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
+   <script src="js/lib/csv.js"></script>
+   <script src="js/lib/jquery-2.1.0.min.js"></script>
+   <script src="js/lib/Tween.js"></script>
+   <script src="js/lib/bufferloader.js"></script>
+   <script>var juice = 0;</script>
+</head>
+<body>
+   <div id="assets" style="display: none;"> 
+
+      <!-- SMILE -->
+      <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+         width="100px" height="100px" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve">
+      <path d="M92.815,58.327C95.771,64.676,67.593,88.489,50,88.489c-17.594,0-47.015-15.415-44.735-22.033
+         c1.735-5.035,25.867-3.617,43.46-3.617C66.318,62.839,91.042,54.519,92.815,58.327z"/>
+      <path d="M79.592,47.968c0.388,3.965-2.969,1.679-8.46,2.214c-5.489,0.537-7.149,3.906-8.165,0.24
+         c-1.473-5.317,2.004-9.08,7.494-9.615C74.68,40.395,78.952,41.41,79.592,47.968z"/>
+      <path d="M35.341,50.716c0,5.517-3.751,1.83-9.269,1.83c-5.516,0-8.67,4.025-9.217-0.772
+         c-0.624-5.481,4.473-9.989,9.988-9.989C32.361,41.785,35.341,45.199,35.341,50.716z"/>
+      </svg>
+
+
+      <!-- FACE_1 -->
+      <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+         width="100px" height="100px" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve">
+         <path fill="#FF7BAC" d="M76.167,70.917C83.25,77.084,60.574,75.5,52.583,75.5c-12.25,0-22.985,4.501-19.402-1.749
+            C36.083,69.09,44.857,61.938,51.417,62C57.396,62.061,68.833,65.417,76.167,70.917z"/>
+         <path fill="#FF7BAC" d="M62.74,47.131c0.025-3.984,3.549-2.919,9.065-2.881c5.514,0.035,8.312-1.002,8.943,2.75
+            c0.912,5.439-3.438,8.037-8.956,8C67.557,54.971,62.695,53.721,62.74,47.131z"/>
+         <path fill="#FF7BAC" d="M35.341,50.716c0,5.517-3.751,6.618-9.269,6.618c-5.516,0-8.67-0.764-9.217-5.561
+            c-0.624-5.481,3.697-7.19,9.213-7.19C31.586,44.583,35.341,45.199,35.341,50.716z"/>
+      </svg>
+
+
+      <!-- FACE_2 -->
+
+      <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+    width="100px" height="100px" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve">
+         <path fill="#FF7BAC" d="M66.25,72.75c1,1.583-2,9.25-13.5,5c-7.863-2.906-13.171-1.783-12.5-3.384
+            c0.736-2.001,4.283-3.43,10.843-3.366C57.072,71.06,65.167,70.521,66.25,72.75z"/>
+         <path fill="#FF7BAC" d="M62.74,47.131c0.025-3.984,4.077-1.358,9.594-1.32c5.515,0.035,7.785-2.563,8.416,1.189
+            c0.912,5.44-3.438,8.037-8.956,8C67.556,54.971,62.696,53.72,62.74,47.131z"/>
+         <path fill="#FF7BAC" d="M35.341,50.716c0,5.517-3.751,6.618-9.269,6.618c-5.516,0-8.67-0.764-9.217-5.561
+            c-0.624-5.481,4.129-3.19,9.645-3.19C32.018,48.583,35.341,45.199,35.341,50.716z"/>
+      </svg>
+
+
+      <!-- FACE_3 -->
+
+      <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+    width="100px" height="100px" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve">
+         <path fill="#FF7BAC" d="M65.25,70.25c0.24,4.374-2.51,8.667-11.333,9.417c-9.5,0.219-14.946-3-14.917-8
+            c-0.667-10,10.49-9.601,12-9.583C56.979,62.145,64.667,61.334,65.25,70.25z"/>
+         <path fill="#FF7BAC" d="M62.74,47.131c0.025-3.984,3.548-5.324,9.064-5.286c5.514,0.035,8.313,1.403,8.944,5.155
+            c0.912,5.439-3.438,8.037-8.956,8C67.557,54.971,62.695,53.721,62.74,47.131z"/>
+         <path fill="#FF7BAC" d="M35.341,50.716c0,5.517-3.751,6.618-9.269,6.618c-5.516,0-8.67-0.764-9.217-5.561
+            c-0.624-5.481,3.701-8.106,9.217-8.106C31.59,43.667,35.341,45.199,35.341,50.716z"/>
+      </svg>
+
+
+
+      <!-- OOH !--> 
+<svg version="1.1"
+    id="svg2" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+    xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="434.778px"
+    height="310.025px" viewBox="0 0 434.778 310.025" enable-background="new 0 0 434.778 310.025" xml:space="preserve">
+   <path id="path2985" fill="#49A648" d="M169.785,527.802c-2.581,5.518-4.256,11.487-4.622,17.568
+      c-0.345,5.723,0.48,11.499,2.279,16.943c1.908,5.774,4.861,11.172,8.405,16.115l0,0c3.973,5.541,8.68,10.533,13.756,15.086l0,0
+      c12.009,10.771,25.973,19.187,40.46,26.282l0,0c16.831,8.243,34.521,14.664,52.558,19.753c19.138,5.399,38.704,9.281,58.451,11.613
+      c19.283,2.277,38.764,3.094,58.142,1.865c17.513-1.109,35.011-3.854,51.628-9.492c14.299-4.85,28.059-11.965,38.914-22.459l0,0
+      c26.244-25.38,48.891-54.447,67.402-85.915c16.252-27.625,29.584-57.176,37.18-88.314c3.096-12.694,5.209-25.672,5.494-38.735
+      c0.232-10.725-0.748-21.585-4.178-31.75c-1.475-4.372-3.42-8.597-5.936-12.465l0,0c-2.375-3.655-5.268-6.981-8.617-9.771
+      c-7.17-5.972-16.352-9.209-25.633-10.193c-9.488-1.006-19.236,0.074-28.123,3.547c-8.594,3.357-16.273,8.785-22.965,15.138
+      c-7.391,7.019-13.684,15.119-19.428,23.539c-6.326,9.272-11.996,18.975-17.515,28.75c-11.505,20.382-22.271,41.263-35.784,60.374
+      c-6.395,9.043-13.426,17.681-21.517,25.244c-7.714,7.211-16.448,13.406-26.097,17.695c-9.455,4.201-19.685,6.543-30,7.355l0,0
+      c-10.457,0.824-20.991,0.148-31.375-1.335c-21.147-3.021-41.661-9.32-62.287-14.88c-9.457-2.55-18.96-4.979-28.617-6.614
+      c-8.387-1.42-16.938-2.272-25.403-1.442h0c-3.781,0.372-7.535,1.098-11.138,2.303l0,0c-3.504,1.172-6.857,2.805-9.904,4.895
+      C178.424,513.228,173.325,520.23,169.785,527.802L169.785,527.802z"/>
+   <path id="path3757" fill="#FFFFFF" d="M531.082,419.042c0,5.825-4.268,10.548-9.535,10.549s-9.537-4.72-9.539-10.545
+      c0-0.001,0-0.002,0-0.003c0-5.825,4.268-10.548,9.535-10.549s9.537,4.72,9.539,10.545
+      C531.082,419.04,531.082,419.041,531.082,419.042z"/>
+   <path id="path3767" fill="#FFFFFF" d="M574.518,421.063c0.002,5.825-4.268,10.548-9.535,10.549
+      c-5.266,0.001-9.537-4.72-9.537-10.545c0-0.001,0-0.002,0-0.003c-0.002-5.825,4.268-10.548,9.535-10.549
+      c5.266-0.001,9.537,4.72,9.537,10.545C574.518,421.06,574.518,421.061,574.518,421.063z"/>
+   <path id="path3769" fill="#FFFFFF" stroke="#FFFFFF" d="M518.209,449.301c-0.221,2.423,0.07,4.928,1.113,7.126
+      c0.926,1.946,2.426,3.594,4.205,4.806c3.955,2.695,8.967,3.456,13.748,3.22l0,0c5.037-0.249,10.084-1.613,14.314-4.356l0,0
+      c1.908-1.237,3.639-2.782,4.916-4.664c1.229-1.812,1.986-3.947,2.109-6.132c0.117-2.119-0.35-4.269-1.363-6.132l0,0
+      c-1.014-1.86-2.523-3.423-4.24-4.664c-3.875-2.799-8.689-4.114-13.465-4.356l0,0c-4.863-0.247-9.895,0.648-14.031,3.22l0,0
+      c-1.969,1.224-3.699,2.853-4.949,4.806C519.203,444.302,518.438,446.785,518.209,449.301L518.209,449.301z"/>
+</svg>
+
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="200px" height="200px" viewBox="0 0 200 200" enable-background="new 0 0 200 200" xml:space="preserve">
+<polygon points="22.165,165 99.5,34.977 176.835,165 99.5,126.726 "/>
+</svg>
+
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="200px" height="200px" viewBox="0 0 200 200" enable-background="new 0 0 200 200" xml:space="preserve">
+<polygon points="23.165,119 100.5,107.75 177.835,119 100.5,80.726 "/>
+</svg>
+
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+    width="200px" height="200px" viewBox="0 0 200 200" enable-background="new 0 0 200 200" xml:space="preserve">
+<path fill="#FFFFFF" stroke="#000000" stroke-miterlimit="10" d="M164.5,100.5v-65h-65v-10h-75v75h10v65h65v10h75v-75H164.5z
+    M33.5,92.5V42.25V34.5H43h48.5v8h-50v50H33.5z M165.5,158v8.5H157h-49.5v-8h50v-50h8V158z"/>
+</svg>
+
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+    width="200px" height="200px" viewBox="0 0 200 200" enable-background="new 0 0 200 200" xml:space="preserve">
+<path fill="#FFFFFF" stroke="#000000" stroke-miterlimit="10" d="M164.5,100.5v-65h-65v-10h-75v75h10v65h65v10h75v-75H164.5z
+    M41.5,92.5h-8V42.25V34.5H43h48.5v8h-50V92.5z M59,109h-8V58.75V51h9.5H109v8H59V109z M91,150v-8h50V92h8v50.25V150h-9.5H91z
+    M165.5,158v8.5H157h-49.5v-8h50v-50h8V158z"/>
+</svg>
+
+
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+    width="200px" height="200px" viewBox="0 0 200 200" enable-background="new 0 0 200 200" xml:space="preserve">
+   <path fill="#FFFFFF" stroke="#000000" stroke-miterlimit="10" d="M41.023,146.338C30.987,133.582,25,117.49,25,100
+      c0-16.956,5.627-32.598,15.115-45.16"/>
+   <path fill="#FFFFFF" stroke="#000000" stroke-miterlimit="10" d="M141.944,162.186C129.973,170.275,115.538,175,100,175
+      c-23.931,0-45.245-11.208-58.977-28.662"/>
+   <path fill="#FFFFFF" stroke="#000000" stroke-miterlimit="10" d="M146.652,41.271C163.926,55.012,175,76.212,175,100
+      c0,25.885-13.111,48.707-33.056,62.186"/>
+   <path fill="#FFFFFF" stroke="#000000" stroke-miterlimit="10" d="M40.115,54.84C53.806,36.714,75.535,25,100,25
+      c17.635,0,33.848,6.085,46.652,16.271"/>
+</svg>
+
+<svg version="1.1" id="Layer_1" xmlns:x="&ns_extend;" xmlns:i="&ns_ai;" xmlns:graph="&ns_graphs;"
+    xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="200px" height="200px" viewBox="0 0 200 200" enable-background="new 0 0 200 200" xml:space="preserve">
+   <path fill="#FFFFFF" stroke="#000000" stroke-miterlimit="10" d="M41.5,92.5h-8V42.25V34.5H43h48.5v8h-50V92.5z M59,109h-8V58.75 V51h9.5H109v8H59V109z M91,150v-8h50V92h8v50.25V150h-9.5H91z M165.5,158v8.5H157h-49.5v-8h50v-50h8V158z"/>
+</svg>
+
+</div>
+
+   <div id="game-container">
+      <div class="tut header step-0 right center">
+         Hey.
+      </div>
+      <div class="tut header step-1 right center"> 
+         I'm E. coli.
+      </div>
+      <div class="tut header step-2 bottom top-left"> 
+         At Cal Poly, we sequence my DNA with Pyroprinting.
+      </div>
+
+      <div class="tut header step-3 bottom top-left"> 
+         These two weird DNA fragments ...
+      </div>
+
+      <div class="tut header step-4 bottom top-left"> 
+         Are we in the same strain?
+      </div>
+
+      <div class="tut header step-5 bottom top-left"> 
+         POOP-SNOOP? That's a comparison matrix.
+      </div>
+
+      <div class="tut header step-6 bottom top-left">
+         One intersection, one DNA region
+      </div>
+
+      <div class="tut header step-7 bottom top-left"> 
+         Rearrange with click and drag!
+      </div>
+
+      <div class="tut header step-8 bottom top-left"> 
+         Comparing 3 E. coli samples.
+      </div>
+
+      <div class="tut header step-9 bottom top-left"> 
+         The goal is to find the biggest strain.
+      </div>
+
+      <div class="tut header step-10 bottom top-left">
+         Comparing 4 E. coli samples.
+      </div>
+
+      <div class="tut header step-11 bottom top-left"> 
+         That's no strain!
+      </div>
+
+      <div class="tut header step-12 bottom top-left"> 
+         You're ready for science!
+      </div>
+
+      <div class="tut hint step-1 left bot-right">
+         E. coli is a serious food source contaminent and occasionally responsible for food product recalls.<br><br>Scientists want to monitor strains of E. coli to mitigate outbreaks.
+      </div>
+
+      <div class="tut hint step-2 left bot-right"> 
+         By gathering many E. coli samples from many geographic sources, we can look for trends about strains.
+         <br><br>
+         Essentially, we want to identify these strains out with POOP-SNOOP.
+      </div>
+
+      <div class="tut hint step-3 left bot-right"> 
+         ... the 16-23S region and the 23-5S region, are used to classify E. coli into strains.
+      </div>
+
+      <div class="tut hint step-4 left bot-right"> 
+         Using science(!), we can say 2 E. coli are in the same strain if BOTH these regions match.
+      </div>
+
+      <div class="tut hint step-5 left bot-right">
+         Each row and respective column represent an E. coli sample.
+         <br><br>
+         Each unique sample is associated with a color. It appears once in a row and once in a column.
+      </div>
+      
+      <div class="tut hint step-6 left bot-right">
+         One intersection between colors is one how one region of DNA compares. 
+         <br><br>
+         The second intersection between the same colors compares the other region of DNA.
+      </div>
+
+      <div class="tut hint step-7 left bot-right"> 
+         Rows and columns are linked! Try it!
+      </div>
+      
+      <div class="tut hint step-8 left bot-right"> 
+         The happiest squares represent a SOLUTION, the strain of E. coli.
+         <br><br>
+         Here, the second 2 E. coli samples form a 2-species strain!
+      </div>
+
+      <div class="tut hint step-9 left bot-right"> 
+         The goal of POOP-SNOOP is to find the biggest strain possible.
+         <br><br>
+         To identify as many strains as possble, compare more samples and aggregate solutions between players.
+      </div>
+
+      <div class="tut hint step-10 left bot-right">
+         Rearrange the grid to make a potential strain between 3 samples<br>(3 x 3 = 9 squares total) then press next.
+      </div>
+
+      <div class="tut hint step-11 left bot-right"> 
+         The solutions must be formed centered on the diagonal. Solutions not including the diagonal don't work!
+      </div>
+
+      <div class="tut hint step-12 left bot-right"> 
+         Please fill out this initial <a class="tutorial-form-link" href="https://docs.google.com/forms/d/1Tr-ylX5xNNuxB1NZN-bHRXLpoPF-x9ZCtHvZwhBhnS8/viewform" target="_blank">survey</a>. Thank you! Continue when you're ready.
+      </div>
+
+      <div class="tut hint step-13 bot bottom">
+         When you're done playing, please fill out this final <a class="final-form-link" href="https://docs.google.com/forms/d/1bGVEfkIEcujAn4XLoF_wa9ectCzxvmICf3ewQDms44o/viewform" target="_blank">survey</a>. Thanks for your participation!
+      </div>
+
+      <div class="tut header winCondition bottom center">
+         4 is the highest score<br>in this puzzle, great job!
+      </div>
+
+      <div class="btn next">NEXT</div>
+
+      <div class="tut step-3 label left">16-23S</div>
+      <div class="tut step-3 label right">23-5S</div>
+
+      <div class="tut step-4 step-5 label up-left">16-23S</div>
+      <div class="tut step-4 step-5 label up-right">23-5S</div>
+
+   </div>
+
+
+   <script src="js/lib/two.js"></script>
+   <script src="js/sounds.js"></script>
+   <script src="js/grid.js"></script>
+   <script src="js/splash.js"></script>
+   <script src="js/box.js"></script>
+   <script src="js/animations.js"></script>
+   <script src="js/utilities.js"></script>
+   <script src="js/game.js"></script>
+   <script src="js/two-juicy.js"></script>
+
+</body>
+</html>

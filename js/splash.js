@@ -243,11 +243,5 @@ Splash.prototype.nextTutorial = function() {
       if("bt" in window) {
          clearInterval(window.bt);
       }
-
-      setTimeout(function() {
-         window.bt = setInterval(function() {
-            $('#game-container .btn').toggleClass('pulse');
-         }, 500);
-      }, 3000);
    }
 }
