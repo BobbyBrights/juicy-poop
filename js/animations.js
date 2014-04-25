@@ -196,50 +196,56 @@ background_animations.push(BUBBLES);
 
 var BARS = function() {
 
-   var group = sweepground;
+   switch(juice) {
+      case 1:
+      var group = sweepground;
 
-   var bars = 50;
-   var width = Math.sqrt(two.width*two.width*2) * (1.0/bars);
+      var bars = 50;
+      var width = Math.sqrt(two.width*two.width*2) * (1.0/bars);
 
-   for(var i = 0; i < bars; i++) {
+      for(var i = 0; i < bars; i++) {
 
-      var isTop = !!(i%2);
-      var isLeft = !!((i%4==0) || ((i+1)%4==0));
+         var isTop = !!(i%2);
+         var isLeft = !!((i%4==0) || ((i+1)%4==0));
 
-      var color = colors[1].BACKGROUND_FILL[randomInt(0,5)]; 
+         var color = colors[1].BACKGROUND_FILL[randomInt(0,5)]; 
 
-      var rect = two.makeRectangle(0, i * width/2 * (isTop?-1:1), two.width-200, width); 
-      rect.fill = colorToString(color);
-      rect.noStroke();
-      rect.visible = false;
-      group.add(rect);
+         var rect = two.makeRectangle(0, i * width/2 * (isTop?-1:1), two.width-200, width); 
+         rect.fill = colorToString(color);
+         rect.noStroke();
+         rect.visible = false;
+         group.add(rect);
 
-      var dest = (two.width) * (isLeft?-1:1);
-      var start = (two.width) * (isLeft?1:-1);
+         var dest = (two.width) * (isLeft?-1:1);
+         var start = (two.width) * (isLeft?1:-1);
 
-      BARS.tween = new TWEEN.Tween({ x: start, rect: rect, i: i })
-         .to({ x: dest}, 500)
-         .delay(5 * i)
-         .repeat(Infinity)
-         .easing(TWEEN.Easing.Cubic.Out)
-         .onStart(function() {
-            this.rect.visible = true;
+         BARS.tween = new TWEEN.Tween({ x: start, rect: rect, i: i })
+            .to({ x: dest}, 500)
+            .delay(5 * i)
+            .repeat(Infinity)
+            .easing(TWEEN.Easing.Cubic.Out)
+            .onStart(function() {
+               this.rect.visible = true;
 
-            if(this.i == 0) {
-               group.rotation = Math.random() * Math.PI * 2;
-            }
-         })
-         .onUpdate(function() {
-            this.rect.translation.x = this.x;
-         })
-         .onComplete(function() {
-            group.remove(this.rect);
+               if(this.i == 0) {
+                  group.rotation = Math.random() * Math.PI * 2;
+               }
+            })
+            .onUpdate(function() {
+               this.rect.translation.x = this.x;
+            })
+            .onComplete(function() {
+               group.remove(this.rect);
 
-            if(this.i == 50) {
-               group.rotation = 0;
-            }
-         })
-         .start();
+               if(this.i == 50) {
+                  group.rotation = 0;
+               }
+            })
+            .start();
+      }
+
+      default:
+      break;
    }
 }
 
@@ -553,7 +559,7 @@ DNA.prototype.ENTER = function() {
 
    this.group.visible = true;
    this.dna1.visible = true;
-   this.dna2.visible = true;
+   this.dna2.opacity = 0;
 
    this.group.noFill();
    this.group.linewidth = 20;
@@ -564,9 +570,16 @@ DNA.prototype.ENTER = function() {
 
       case 0:
 
-         this.dna1.stroke = "#666";
-         this.dna2.stroke = "#888";
-         this.group.translation.set(0,0);
+         _.each(this.sep, function(seg) {
+            seg.stroke = 'black';
+         });
+         _.each(this.seg1, function(seg) {
+            seg.stroke = '#bbb';
+         });
+         _.each(this.seg2, function(seg) {
+            seg.stroke = '#666';
+         });
+
 
          break;
 
@@ -650,9 +663,10 @@ DNA.prototype.SPLIT = function() {
    switch(juice) {
       case 0:
 
+         this.dna2.opacity = 1;
 
-         this.dna1.translation.x -= 100;
-         this.dna2.translation.x += 100;
+         this.dna1.translation.x -= 70;
+         this.dna2.translation.x += 70;
 
          _.each(this.sep, function(sep) {
             sep.stroke = 'black';

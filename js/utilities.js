@@ -65,14 +65,9 @@ function colorToString(color) {
                            BELOW_THRESHOLD: { r: 255, g: 255, b: 255, a: 0 } 
                         },
                   BACKGROUND_FILL: [
-                  { r: 260, g: 260, b: 260, a: 1 },
                   { r: 230, g: 230, b: 230, a: 1 },
-                  { r: 200, g: 200, b: 200, a: 1 },
-                  { r: 150, g: 150, b: 150, a: 1 },
-                  { r: 120, g: 120, b: 120, a: 1 },
                   { r: 90, g: 90, b: 90, a: 1 },
                   { r: 60, g: 60, b: 60, a: 1 },
-                  { r: 30, g: 30, b: 30, a: 1 },
                   { r: 0, g: 0, b: 0, a: 1 },
                   ]
                },
